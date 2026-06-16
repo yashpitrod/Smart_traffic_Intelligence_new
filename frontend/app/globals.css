@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 1. Base Colors (Wise Pruned Palette) */
+    --background: #ffffff; /* White Mode as requested */
+    --foreground: #163300; /* Wise Forest Green (Replacing #000 text) */
+
+    /* 2. Neo-Brutal Variables (Map these in your tailwind.config.js if needed) */
+    --neo-bg: #ffffff;
+    --neo-text: #163300;
+    --neo-border: #163300; /* The "Ink" color for borders */
+    --neo-card: #ffffff;
+    --neo-shadow: #163300;
+
+    /* 3. Accents */
+    --neo-primary: #9fe870; /* Wise Bright Green */
+    --neo-secondary: #d4f0c4; /* Light Green (subtle) */
+    --neo-accent: #a0e1e1; /* Wise Blue */
+  }
+
+  /* Optional Dark Mode - Inverting the Wise Palette */
+  .dark {
+    --background: #163300; /* Dark Forest Green bg */
+    --foreground: #9fe870; /* Bright Green text */
+    --neo-bg: #163300;
+    --neo-text: #9fe870;
+    --neo-border: #9fe870;
+    --neo-shadow: #000000;
+    --neo-card: #0d1f00; /* Slightly darker green for cards */
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Using standard text color variable instead of hardcoded class */
+    @apply bg-[var(--neo-bg)] text-[var(--neo-text)] font-display;
+  }
+
+  /* Accessibility: High contrast focus indicators */
+  :focus-visible {
+    outline: 3px solid var(--neo-border);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--neo-primary);
+  }
+
+  /* 4. Scrollbar - Customized to Wise Palette */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--neo-bg);
+    border-left: 3px solid var(--neo-border);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--neo-primary); /* Wise Bright Green */
+    border: 3px solid var(--neo-border);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--neo-text); /* Hover turns it dark */
+  }
+}
+
+/* Ticker scroll animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+@layer components {
+  .neo-brutal-box {
+    @apply border-3 transition-all duration-200;
+    border-color: var(--neo-border);
+    background-color: var(--neo-card);
+    /* Hard shadow using the ink color */
+    box-shadow: 4px 4px 0px 0px var(--neo-shadow);
+  }
+
+  .neo-brutal-box:hover {
+    @apply translate-x-[2px] translate-y-[2px];
+    box-shadow: none;
+  }
+
+  /* Grid Background - Swapped black opacity for Ink opacity */
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: linear-gradient(
+        to right,
+        rgba(22, 51, 0, 0.1) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(22, 51, 0, 0.1) 1px, transparent 1px);
+  }
+
+  .pattern-diagonal {
+    /* Updated to use Ink color variable */
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--neo-text) 0,
+      var(--neo-text) 1px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 10px 10px;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 15%,
+      black 85%,
+      transparent
+    );
+  }
+
+  .logo-grayscale {
+    filter: grayscale(100%) opacity(0.5);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+
+  .logo-grayscale:hover {
+    filter: grayscale(0%) opacity(1);
+  }
+
+  /* Standard Neo-Brutalist Button */
+  .btn-neo {
+    @apply border-3 transition-all duration-200;
+    border-color: var(--neo-border);
+    background-color: var(--neo-primary); /* Default to Wise Green */
+    color: var(--neo-text);
+    box-shadow: 4px 4px 0px 0px var(--neo-shadow);
+  }
+
+  .btn-neo:hover {
+    @apply translate-x-[2px] translate-y-[2px];
+    box-shadow: none;
+  }
+
+  .btn-neo:active {
+    @apply translate-x-[4px] translate-y-[4px];
+    box-shadow: none;
+  }
+
+  /* Terminal Inversion - Updated to Wise Green on Ink */
+  .terminal-invert {
+    @apply px-2 py-1;
+    background-color: var(--neo-text); /* #163300 */
+    color: var(--neo-primary); /* #9FE870 */
+    border-radius: 0;
+  }
+
+  .terminal-invert-sm {
+    @apply px-1.5 py-0.5;
+    background-color: var(--neo-text);
+    color: var(--neo-primary);
+    border-radius: 0;
+    font-size: 0.75rem;
+  }
+
+  .terminal-invert-lg {
+    @apply px-3 py-2;
+    background-color: var(--neo-text);
+    color: var(--neo-primary);
+    border-radius: 0;
+  }
+
+  .img-bw-to-color {
+    @apply grayscale transition-all duration-500;
+  }
+
+  .img-bw-to-color:hover,
+  .group:hover .img-bw-to-color {
+    @apply grayscale-0;
+  }
+}
