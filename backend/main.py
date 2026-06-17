@@ -1,6 +1,6 @@
 """
 Smart Traffic Intelligence System — FastAPI Entry Point
-
+"""
 
 import asyncio
 import logging
