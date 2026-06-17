@@ -298,3 +298,57 @@ def get_analytics_cache() -> Dict[str, Any]:
 def get_junction_lookup() -> Dict[str, int]:
     """Return junction → recurrence count dict."""
     return _junction_lookup
+
+
+def add_live_incident(incident_data: Dict[str, Any], prediction_result: Dict[str, Any]) -> None:
+    """
+    Append a newly submitted incident to the in-memory global dataset.
+    This ensures that the anomaly replay loop and heatmap endpoints
+    immediately reflect the new incident.
+    """
+    global _df
+
+    if _df is None:
+        logger.warning("Dataset not loaded. Cannot add live incident.")
+        return
+
+    # Prepare the new row
+    import datetime
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    
+    new_row = {
+        "start_datetime": incident_data.get("start_datetime") or now_iso,
+        "latitude": incident_data.get("latitude", 12.9716),
+        "longitude": incident_data.get("longitude", 77.5946),
+        "event_type": incident_data.get("event_type", "unplanned"),
+        "event_cause": incident_data.get("event_cause", "unknown"),
+        "veh_type": incident_data.get("veh_type"),
+        "requires_road_closure": incident_data.get("requires_road_closure", False),
+        "zone": incident_data.get("zone"),
+        "junction": incident_data.get("junction"),
+        "corridor": incident_data.get("corridor"),
+        "police_station": incident_data.get("police_station"),
+        "address": incident_data.get("address"),
+        "priority": prediction_result.get("priority", "Low"),
+        "estimated_duration_minutes": prediction_result.get("estimated_duration_minutes"),
+        # We set resolution_minutes so the heatmap cache picks it up properly
+        "resolution_minutes": prediction_result.get("estimated_duration_minutes"),
+        "is_live_submission": True  # Flag to distinguish from historical data
+    }
+    
+    new_df = pd.DataFrame([new_row])
+    
+    # Concatenate and update the global dataframe
+    _df = pd.concat([_df, new_df], ignore_index=True)
+    logger.info(f"Added 1 live incident to dataset. Total records now: {len(_df)}")
+    
+    # We could rebuild caches here, but for the hackathon, we only need
+    # to rebuild the heatmap cache so the map updates instantly.
+    # Anomaly detector reads directly from _df every 5s, so it doesn't need a cache rebuild.
+    global _heatmap_cache
+    if _heatmap_cache is not None:
+        try:
+            _heatmap_cache = _build_heatmap_cache(_df)
+            logger.info("Rebuilt heatmap cache with new live incident.")
+        except Exception as e:
+            logger.error(f"Error rebuilding heatmap cache: {e}")

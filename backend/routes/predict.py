@@ -29,6 +29,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from backend.agents.prediction_agent import PredictionAgent
+from backend.data.loader import add_live_incident
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +165,10 @@ async def predict_incident(request: PredictRequest) -> PredictResponse:
         incident_data = request.model_dump(exclude_none=False)
 
         result = _agent.predict_incident(incident_data)
+
+        # Append the new incident + prediction to the live dataset so
+        # the map and anomaly detector instantly see it!
+        add_live_incident(incident_data, result)
 
         return PredictResponse(**result)
 

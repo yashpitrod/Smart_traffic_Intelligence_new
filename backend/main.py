@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 from backend.agents.anomaly_detector import TrafficAnomalyDetector
 from backend.agents.nlp_parser import NLPIncidentParser
 from backend.agents.prediction_agent import PredictionAgent
+from backend.agents.action_planner import ActionPlannerAgent
 
 # ---------------------------------------------------------------------------
 # Data loader
@@ -68,7 +69,7 @@ from backend.routes.anomaly import (
 from backend.routes.heatmap import router as heatmap_router
 from backend.routes.incidents import router as incidents_router
 from backend.routes.analytics import router as analytics_router
-from backend.routes.action_plan import router as action_plan_router
+from backend.routes.action_plan import router as action_plan_router, init_action_planner
 from backend.routes.feedback import router as feedback_router
 
 # ---------------------------------------------------------------------------
@@ -109,8 +110,9 @@ async def startup_event() -> None:
     2. Initialise Agent 1 (NLP Parser).
     3. Initialise Agent 2 (Prediction Agent) + load .joblib models.
     4. Initialise Agent 3 (Anomaly Detector) + load .joblib model.
-    5. Inject agents into route modules.
-    6. Start the anomaly replay background task.
+    5. Initialise Agent 4 (Action Planner).
+    6. Inject agents into route modules.
+    7. Start the anomaly replay background task.
     """
     logger.info("=== Smart Traffic Intelligence — starting up ===")
 
@@ -170,7 +172,13 @@ async def startup_event() -> None:
     init_anomaly_detector(anomaly_detector)
     logger.info("Agent 3 ready.")
 
-    # ── 5. Start anomaly replay background task ─────────────────────────────
+    # ── 5. Agent 4: Action Planner ──────────────────────────────────────────
+    logger.info("Initialising Agent 4 (Action Planner) …")
+    action_planner = ActionPlannerAgent()
+    init_action_planner(action_planner)
+    logger.info("Agent 4 ready.")
+
+    # ── 6. Start anomaly replay background task ─────────────────────────────
     logger.info("Starting anomaly replay background task …")
     df = get_dataframe()
     asyncio.create_task(anomaly_replay_loop(df))
