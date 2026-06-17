@@ -1,0 +1,7 @@
+# This directory holds serialised ML models (joblib files).
+# Files placed here at training time:
+#   - priority_classifier.joblib   (XGBoost binary classifier — Agent 2)
+#   - duration_regressor.joblib    (XGBoost regressor — Agent 2)
+#   - junction_recurrence.joblib   (dict: junction name → recurrence count)
+#   - zone_label_encoder.joblib    (sklearn LabelEncoder for zone column)
+#   - anomaly_detector.joblib      (Isolation Forest — Agent 3)
