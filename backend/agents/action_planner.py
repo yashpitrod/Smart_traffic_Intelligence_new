@@ -5,6 +5,8 @@ import re
 from typing import AsyncGenerator, Dict, Any, Optional
 from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 
+from backend.utils.security import sanitize_url
+
 import requests
 
 logger = logging.getLogger(__name__)
@@ -20,17 +22,6 @@ ALLOWED_MODELS = [
 ]
 DEFAULT_MODEL = "groq/compound-mini"
 
-
-def sanitize_url(url: str) -> str:
-    """Redacts the 'key' query parameter from a URL to prevent leaks."""
-    try:
-        parsed = urlparse(url)
-        queries = parse_qsl(parsed.query)
-        redacted_queries = [(k, '[REDACTED]' if k == 'key' else v) for k, v in queries]
-        new_query = urlencode(redacted_queries)
-        return urlunparse(parsed._replace(query=new_query))
-    except Exception:
-        return "[REDACTED_URL]"
 
 
 class ActionPlannerAgent:
@@ -245,35 +236,5 @@ class ActionPlannerAgent:
             yield f"data: WARNING: API call failed ({safe_err}). Action Planner model is not loaded.\n\n"
             yield "data: [DONE]\n\n"
             return
-
-        yield "data: [DONE]\n\n"
-
-    async def _fallback_stream(self, user_prompt: str) -> AsyncGenerator[str, None]:
-        """
-        Deterministic fallback plan when the Gemini API is unavailable.
-        """
-        import asyncio
-
-        priority = "High" if "Priority: High" in user_prompt else "Low"
-        officer_count = 6 if priority == "High" else 3
-
-        plan_lines = [
-            f"Officers: Deploy {officer_count} officers immediately — 2 at the primary incident site, "
-            f"2 at approach diversions, and {officer_count - 4} in reserve for crowd management.\n",
-            "Barricades: Place reflective barricades 50m upstream of the incident on both approach lanes. "
-            "Position cones along the diversion route entry points.\n",
-            "Diversion: Route traffic via the nearest parallel arterial. "
-            "Use the alternate service road where available; update variable message signs.\n",
-            f"Estimated Clearance: {'60–90' if priority == 'High' else '30–45'} minutes from deployment. "
-            "Reassess after 45 minutes if not cleared.\n",
-            "Escalation Trigger: Escalate to zone control if incident is not contained within 90 minutes, "
-            "if a secondary incident occurs, or if queue length exceeds 500 metres.\n",
-            "Public Advisory: Motorists advised to avoid the affected corridor. "
-            "Use alternate routes. Allow additional 20 minutes travel time. Follow officer directions.\n",
-        ]
-
-        for line in plan_lines:
-            yield f"data: {line}\n\n"
-            await asyncio.sleep(0.05)
 
         yield "data: [DONE]\n\n"

@@ -5,6 +5,8 @@ import re
 from typing import Dict, Any, Optional
 from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 
+from backend.utils.security import sanitize_url
+
 import requests
 
 logger = logging.getLogger(__name__)
@@ -20,17 +22,6 @@ ALLOWED_MODELS = [
 ]
 DEFAULT_MODEL = "groq/compound-mini"
 
-
-def sanitize_url(url: str) -> str:
-    """Redacts the 'key' query parameter from a URL to prevent leaks."""
-    try:
-        parsed = urlparse(url)
-        queries = parse_qsl(parsed.query)
-        redacted_queries = [(k, '[REDACTED]' if k == 'key' else v) for k, v in queries]
-        new_query = urlencode(redacted_queries)
-        return urlunparse(parsed._replace(query=new_query))
-    except Exception:
-        return "[REDACTED_URL]"
 
 
 class NLPIncidentParser:
@@ -168,21 +159,26 @@ If you cannot parse the incident or if the text is completely irrelevant to traf
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.groq_key}",
         }
-        few_shot_user = "ಬಿಎಂಟಿಸಿ ಬಸ್ ಕೆಟ್ಟು ನಿಂತಿದೆ ಸರ್"
-        few_shot_assistant = json.dumps({
+        few_shot_user_1 = "ಬಿಎಂಟಿಸಿ ಬಸ್ ಕೆಟ್ಟು ನಿಂತಿದೆ ಸರ್"
+        few_shot_assistant_1 = json.dumps({
             "root_cause": "vehicle_breakdown",
             "vehicle_type": "bmtc_bus",
             "severity": 2,
             "action_needed": True,
             "normalized_summary": "BMTC bus has broken down at the reported location."
         })
+        few_shot_user_2 = "there was a murder in the alleyway"
+        few_shot_assistant_2 = "null"
+        
         payload = {
             "model": model_name,
             "temperature": 0.0,
             "messages": [
                 {"role": "system",    "content": self._get_system_prompt()},
-                {"role": "user",      "content": few_shot_user},
-                {"role": "assistant", "content": few_shot_assistant},
+                {"role": "user",      "content": few_shot_user_1},
+                {"role": "assistant", "content": few_shot_assistant_1},
+                {"role": "user",      "content": few_shot_user_2},
+                {"role": "assistant", "content": few_shot_assistant_2},
                 {"role": "user",      "content": description},
             ],
         }

@@ -122,7 +122,7 @@ async def heatmap_replay_loop(df: pd.DataFrame) -> None:
         global _heatmap_replay_cache, _replay_finished
         _heatmap_replay_cache = []
         _replay_finished = False
-        anchor = asyncio.get_event_loop().time()
+        anchor = asyncio.get_running_loop().time()
         return anchor, 0
 
     # First-time init
@@ -148,7 +148,7 @@ async def heatmap_replay_loop(df: pd.DataFrame) -> None:
 
         try:
             if not _replay_finished:
-                now = asyncio.get_event_loop().time()
+                now = asyncio.get_running_loop().time()
                 expected_ticks = int((now - replay_start_time) / _REPLAY_INTERVAL_SECONDS)
                 ticks_to_run = expected_ticks - processed_ticks
 
@@ -191,7 +191,7 @@ async def heatmap_replay_loop(df: pd.DataFrame) -> None:
             logger.exception("Unhandled error in heatmap_replay_loop — continuing.")
 
         # Sleep precisely until the next theoretical tick
-        now = asyncio.get_event_loop().time()
+        now = asyncio.get_running_loop().time()
         next_tick_time = replay_start_time + ((processed_ticks + 1) * _REPLAY_INTERVAL_SECONDS)
         await asyncio.sleep(max(0.0, next_tick_time - now))
 

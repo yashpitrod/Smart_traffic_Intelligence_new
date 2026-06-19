@@ -45,7 +45,8 @@ VEHICLE_TYPE_CATEGORIES: List[str] = [
 ]
 
 # Peak-hour windows used for the is_peak_hour derived feature.
-PEAK_HOURS: set = {7, 8, 9, 17, 18, 19}
+# Must match feature_engineering.py: (7 <= h <= 10) or (17 <= h <= 20)
+PEAK_HOURS: set = {7, 8, 9, 10, 17, 18, 19, 20}
 
 # Corridor encoding: named major road → 2, ORR variants → 1, everything else → 0.
 ORR_VARIANTS: set = {
@@ -126,6 +127,13 @@ class PredictionAgent:
         self.zone_encoder = None         # sklearn LabelEncoder
 
         self._models_loaded: bool = False
+
+    # Feature vector column order — must stay in sync with the training pipeline.
+    _FEATURE_COLUMNS = [
+        "latitude", "longitude", "requires_road_closure", "hour_of_day",
+        "day_of_week", "is_peak_hour", "is_weekend", "corridor_rank",
+        "junction_recurrence", "event_cause_enc", "veh_type_enc", "zone_enc",
+    ]
 
     # ------------------------------------------------------------------
     # Model lifecycle
@@ -254,12 +262,7 @@ class PredictionAgent:
         from backend.agents.feature_engineering import build_feature_vector as fe_build
         df_feats = fe_build(rec, self.encoders, self.junction_recurrence)
 
-        FEATURES = [
-            "latitude", "longitude", "requires_road_closure", "hour_of_day",
-            "day_of_week", "is_peak_hour", "is_weekend", "corridor_rank",
-            "junction_recurrence", "event_cause_enc", "veh_type_enc", "zone_enc"
-        ]
-        features_row = df_feats[FEATURES].iloc[0]
+        features_row = df_feats[self._FEATURE_COLUMNS].iloc[0]
         return features_row.to_numpy(dtype=np.float64)
 
     # ------------------------------------------------------------------
@@ -292,12 +295,7 @@ class PredictionAgent:
         5. Set confidence = probability of the predicted class.
         6. Return ``{"priority": label, "confidence": confidence}``.
         """
-        FEATURES = [
-            "latitude", "longitude", "requires_road_closure", "hour_of_day",
-            "day_of_week", "is_peak_hour", "is_weekend", "corridor_rank",
-            "junction_recurrence", "event_cause_enc", "veh_type_enc", "zone_enc"
-        ]
-        X = pd.DataFrame([features], columns=FEATURES)
+        X = pd.DataFrame([features], columns=self._FEATURE_COLUMNS)
         probs = self.classifier.predict_proba(X)[0]
         pred_class_idx = np.argmax(probs)
         priority_label = "High" if pred_class_idx == 1 else "Low"
@@ -329,12 +327,7 @@ class PredictionAgent:
         3. Clamp result to ``max(1, round(prediction))``.
         4. Return the integer.
         """
-        FEATURES = [
-            "latitude", "longitude", "requires_road_closure", "hour_of_day",
-            "day_of_week", "is_peak_hour", "is_weekend", "corridor_rank",
-            "junction_recurrence", "event_cause_enc", "veh_type_enc", "zone_enc"
-        ]
-        X = pd.DataFrame([features], columns=FEATURES)
+        X = pd.DataFrame([features], columns=self._FEATURE_COLUMNS)
         pred_log = self.regressor.predict(X)[0]
         pred_mins = np.expm1(pred_log)
         return max(1, int(round(float(pred_mins))))

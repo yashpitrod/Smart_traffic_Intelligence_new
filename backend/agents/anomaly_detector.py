@@ -1,10 +1,13 @@
 import os
+import logging
 import joblib
 import numpy as np
 import pandas as pd
 from datetime import datetime
 from typing import List, Dict, Union, Any
 from sklearn.ensemble import IsolationForest
+
+logger = logging.getLogger(__name__)
 
 class TrafficAnomalyDetector:
     """
@@ -176,7 +179,11 @@ class TrafficAnomalyDetector:
             random_state=42
         )
         self.model.fit(X)
-        
+        logger.info(
+            "[Agent 3 - Anomaly Detector] Isolation Forest fitted on %d baseline rows.",
+            len(X),
+        )
+
         # Save model if path was provided
         if self.model_path:
             self.save(self.model_path)
@@ -343,6 +350,7 @@ class TrafficAnomalyDetector:
         }
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         joblib.dump(state, filepath)
+        logger.info("[Agent 3 - Anomaly Detector] Model state saved to %s.", filepath)
         
     def load(self, filepath: str) -> None:
         """
@@ -354,3 +362,4 @@ class TrafficAnomalyDetector:
         self.model = state['model']
         self.baseline_stats = state['baseline_stats']
         self.overall_mean_duration = state.get('overall_mean_duration', 60.0)
+        logger.info("[Agent 3 - Anomaly Detector] Model state loaded from %s.", filepath)

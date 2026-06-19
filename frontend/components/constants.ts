@@ -1,5 +1,5 @@
 import { SystemData } from '../types';
-import { GithubLogo as Github, LinkedinLogo as Linkedin, Code as Code2, InstagramLogo as Instagram, Envelope as Mail, TwitterLogo as Twitter, Calendar, Globe } from '@phosphor-icons/react/ssr';
+import { GithubLogo as Github, LinkedinLogo as Linkedin, Code as Code2, Envelope as Mail, Calendar, Globe } from '@phosphor-icons/react/ssr';
 
 export const DATA: SystemData = {
   name: "Smart Traffic Intelligence",

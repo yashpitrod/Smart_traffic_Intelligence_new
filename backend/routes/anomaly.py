@@ -62,7 +62,7 @@ _detector: Optional[TrafficAnomalyDetector] = None
 
 # How many incidents to stream in per tick
 _INCIDENTS_PER_TICK = 3
-_REPLAY_INTERVAL_SECONDS = 0.09
+_REPLAY_INTERVAL_SECONDS = 0.07
 
 # Sliding-window size in hours of SIMULATED time.
 # 6h matches the average duration of the model's training 'time_buckets'
@@ -118,7 +118,7 @@ async def anomaly_replay_loop(df: pd.DataFrame) -> None:
     At exactly T seconds after any restart, exactly round(T / INTERVAL) ticks
     have been processed, deterministically, regardless of event-loop jitter.
     """
-    global _anomaly_cache, _zone_accumulators, _replay_finished
+    global _anomaly_cache, _replay_finished
 
     # ------------------------------------------------------------------
     # Pre-process the full dataframe once.
@@ -198,7 +198,7 @@ async def anomaly_replay_loop(df: pd.DataFrame) -> None:
             "progress": {"done": 0, "total": total_rows, "finished": False},
         }
 
-        anchor = asyncio.get_event_loop().time()
+        anchor = asyncio.get_running_loop().time()
         return anchor, 0
 
     # First-time initialisation
@@ -233,7 +233,7 @@ async def anomaly_replay_loop(df: pd.DataFrame) -> None:
         try:
             if _detector is not None and _detector.model is not None:
                 if not _replay_finished:
-                    now = asyncio.get_event_loop().time()
+                    now = asyncio.get_running_loop().time()
                     expected_ticks = int((now - replay_start_time) / _REPLAY_INTERVAL_SECONDS)
                     ticks_to_run = expected_ticks - processed_ticks
 
@@ -347,7 +347,7 @@ async def anomaly_replay_loop(df: pd.DataFrame) -> None:
 
         # Sleep precisely until the NEXT theoretical tick should happen,
         # computed from the LOCAL replay_start_time (not the global).
-        now = asyncio.get_event_loop().time()
+        now = asyncio.get_running_loop().time()
         next_tick_time = replay_start_time + ((processed_ticks + 1) * _REPLAY_INTERVAL_SECONDS)
         sleep_duration = max(0.0, next_tick_time - now)
         await asyncio.sleep(sleep_duration)

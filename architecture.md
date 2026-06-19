@@ -106,7 +106,7 @@ Weight formula: `base_weight * duration_factor`
 - `base_weight`: 2 if `priority == "High"`, 1 if `priority == "Low"`
 - `duration_factor`: normalized `resolution_minutes` (0–1 scale, computed at startup)
 
-Computed once at startup from the full dataset and cached. Frontend calls this once on load for the default static view.
+Computed once at startup from the full dataset and cached. The cache is incrementally updated in O(1) time when new live incidents are submitted. Frontend calls this once on load for the default static view.
 
 ---
 
@@ -494,7 +494,7 @@ Models are serialized with joblib and loaded at server startup. Inference: < 100
 
 Each combination becomes one row (a 3D feature vector). The Isolation Forest is trained on all rows.
 
-**Replay mechanism:** During the demo, the backend streams a small batch of chronological incidents every 0.09 seconds into a pure per-zone accumulator (incidents are never removed; they only accumulate over time). The three statistics are computed from this ever-growing accumulated state per zone and fed to the Isolation Forest. When the dataset is exhausted, the replay loop stops and freezes at the final state.
+**Replay mechanism:** During the demo, the backend streams a small batch of chronological incidents every 0.09 seconds into a per-zone sliding-window deque (incidents older than 24 hours of simulated time are evicted). The three statistics are computed from this sliding window state per zone and fed to the Isolation Forest. When the dataset is exhausted, the replay loop stops and freezes at the final state.
 
 **Output per zone:**
 
@@ -617,8 +617,8 @@ POST /geocode-zone → POST /predict → GET /action-plan SSE → streaming → 
 
 ```
 Background task (every 0.09s):
-    incidents stream into pure per-zone accumulator (never removed)
-    → compute (incident_count, high_priority_ratio, mean_duration) from accumulated state
+    incidents stream into a per-zone sliding-window deque (24h eviction)
+    → compute (incident_count, high_priority_ratio, mean_duration) from the window's state
     → Isolation Forest scores all zones
     → GET /anomaly cache updated
 
@@ -767,6 +767,7 @@ Build Submit Incident form (both input modes) → wire three-step API sequence (
 
 | Date       | Change                                                                                                    | Author       |
 | ---------- | --------------------------------------------------------------------------------------------------------- | ------------ |
+| 2026-06-20 | Backend performance and stability fixes: non-blocking HTTP for Groq APIs, O(1) incremental heatmap cache updates, graceful task cancellation, and shared utilities. | AI Assistant |
 | 2026-06-19 | Added Geocoding (/geocode-zone) for mandatory zone resolution, ZoneClarificationModal, and Map Pin layer. | AI Assistant |
 | 2026-06-18 | Architecture updated to reflect actual Next.js, Groq API, and feature implementations.                    | AI Assistant |
 | 2025-06-16 | Initial architecture.md created from agents.md                                                            | —            |

@@ -6,6 +6,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
+from typing import List
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -86,6 +87,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Background task references — stored so they can be cancelled on shutdown.
+_background_tasks: List[asyncio.Task] = []
 
 
 # ---------------------------------------------------------------------------
@@ -172,14 +176,35 @@ async def startup_event() -> None:
     df = get_dataframe()
 
     logger.info("Starting anomaly replay background task …")
-    asyncio.create_task(anomaly_replay_loop(df))
+    _background_tasks.append(asyncio.create_task(anomaly_replay_loop(df)))
     logger.info("Anomaly replay task started (3 incidents / 0.09 s tick, UI polls every 13 s).")
 
     logger.info("Starting heatmap replay background task …")
-    asyncio.create_task(heatmap_replay_loop(df))
+    _background_tasks.append(asyncio.create_task(heatmap_replay_loop(df)))
     logger.info("Heatmap replay task started (3 incidents / 0.066 s tick, UI polls every 5 s).")
 
     logger.info("=== All agents initialised — server ready ===")
+
+
+# ---------------------------------------------------------------------------
+# Shutdown: cancel background tasks
+# ---------------------------------------------------------------------------
+
+@app.on_event("shutdown")
+async def shutdown_event() -> None:
+    """
+    Cancel background replay tasks on server shutdown to avoid
+    'Task was destroyed but it is pending!' log noise.
+    """
+    logger.info("=== Smart Traffic Intelligence — shutting down ===")
+    for task in _background_tasks:
+        if not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass  # expected on clean shutdown
+    logger.info("Background tasks cancelled.")
 
 
 

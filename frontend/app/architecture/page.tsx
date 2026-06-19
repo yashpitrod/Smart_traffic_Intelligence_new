@@ -19,14 +19,14 @@ export default function ArchitecturePage() {
     useEffect(() => {
         // Safety net: force everything visible after 2s
         const safety = setTimeout(() => {
-            document.querySelectorAll('.arch-block, .arch-connector, .cap-card, .arch-header, .arch-cta').forEach(el => {
+            document.querySelectorAll('.arch-block-1, .arch-block-2, .arch-block-3, .arch-connector-1, .arch-connector-2, .agent-sub-block, .cap-card, .arch-header, .arch-cta').forEach(el => {
                 (el as HTMLElement).style.opacity = '1';
                 (el as HTMLElement).style.transform = 'none';
             });
             document.querySelectorAll('.connector-fill').forEach(el => {
                 (el as HTMLElement).style.transform = 'scaleX(1)';
             });
-        }, 2000);
+        }, 800);
 
         const ctx = gsap.context(() => {
             // Header entrance
@@ -47,61 +47,12 @@ export default function ArchitecturePage() {
                 },
             });
 
-            // Block 1 enters
-            tl.from('.arch-block-1', {
-                x: -60,
-                opacity: 0,
-                duration: 0.6,
-                ease: 'power3.out',
-                clearProps: 'all',
-            });
-
-            // Connector 1 draws from left to right
-            tl.from('.connector-fill-1', {
-                scaleX: 0,
-                transformOrigin: 'left center',
-                duration: 0.5,
-                ease: 'power2.inOut',
-                clearProps: 'all',
-            }, '-=0.1');
-
-            // Block 2 enters (the central orchestrator)
-            tl.from('.arch-block-2', {
-                y: 30,
-                opacity: 0,
-                scale: 0.95,
-                duration: 0.7,
-                ease: 'back.out(1.4)',
-                clearProps: 'all',
-            }, '-=0.2');
-
-            // Agent sub-blocks inside orchestrator stagger in
-            tl.from('.agent-sub-block', {
-                y: 15,
-                opacity: 0,
-                stagger: 0.1,
-                duration: 0.3,
-                ease: 'power2.out',
-                clearProps: 'all',
-            }, '-=0.3');
-
-            // Connector 2 draws
-            tl.from('.connector-fill-2', {
-                scaleX: 0,
-                transformOrigin: 'left center',
-                duration: 0.5,
-                ease: 'power2.inOut',
-                clearProps: 'all',
-            }, '-=0.1');
-
-            // Block 3 enters
-            tl.from('.arch-block-3', {
-                x: 60,
-                opacity: 0,
-                duration: 0.6,
-                ease: 'power3.out',
-                clearProps: 'all',
-            }, '-=0.2');
+            tl.from('.arch-block-1', { y: 40, opacity: 0, scale: 0.8, duration: 0.25, ease: 'back.out(1.5)', clearProps: 'all' })
+              .from('.arch-connector-1', { opacity: 0, scale: 0.5, duration: 0.15, ease: 'back.out(2)', clearProps: 'all' }, '-=0.1')
+              .from('.arch-block-2', { y: 40, opacity: 0, scale: 0.8, duration: 0.25, ease: 'back.out(1.5)', clearProps: 'all' }, '-=0.05')
+              .from('.agent-sub-block', { y: 10, opacity: 0, stagger: 0.05, duration: 0.15, ease: 'power2.out', clearProps: 'all' }, '-=0.1')
+              .from('.arch-connector-2', { opacity: 0, scale: 0.5, duration: 0.15, ease: 'back.out(2)', clearProps: 'all' }, '-=0.05')
+              .from('.arch-block-3', { y: 40, opacity: 0, scale: 0.8, duration: 0.25, ease: 'back.out(1.5)', clearProps: 'all' }, '-=0.1');
 
             // Capabilities Grid — scroll-triggered stagger
             gsap.from('.cap-card', {
@@ -142,15 +93,17 @@ export default function ArchitecturePage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-20">
             {/* Header */}
-            <section className="arch-header max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="h-10 w-10 bg-neo-text flex items-center justify-center text-primary shadow-neo-sm">
-                        <TreeStructure weight="bold" className="w-6 h-6" />
+            <section className="arch-header max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8 text-center">
+                <div className="inline-flex items-center gap-4 mb-4">
+                    <div className="h-14 w-14 bg-neo-text border-4 border-neo-border flex items-center justify-center text-primary shadow-[6px_6px_0px_0px_#9FE870]">
+                        <TreeStructure weight="bold" className="w-8 h-8" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight">System Architecture</h1>
                 </div>
-                <p className="text-xl font-mono text-gray-600 max-w-3xl border-l-4 border-primary pl-4">
-                    How Smart Traffic Intelligence orchestrates data, predictive models, and autonomous agents to manage Bengaluru traffic.
+                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
+                    System Architecture
+                </h1>
+                <p className="text-lg md:text-xl font-mono text-gray-700 max-w-3xl mx-auto border-b-4 border-primary pb-4 inline-block">
+                    Orchestrating data, predictive models, and autonomous agents.
                 </p>
             </section>
 
@@ -174,18 +127,14 @@ export default function ArchitecturePage() {
                         </div>
 
                         {/* Connector 1 — animated data flow line */}
-                        <div className="hidden lg:flex items-center w-[8%] relative">
-                            <div className="w-full h-[3px] bg-gray-200 relative overflow-hidden">
-                                <div className="connector-fill connector-fill-1 absolute inset-0 bg-neo-text origin-left"></div>
-                                <div className="absolute inset-0 arch-data-flow-line"></div>
+                        <div className="hidden lg:flex items-center w-[8%] relative arch-connector-1">
+                            <div className="w-full h-[3px] bg-neo-border relative overflow-hidden">
                             </div>
                             <CaretRight weight="bold" className="absolute -right-2 text-neo-text w-5 h-5" />
                         </div>
                         {/* Mobile/Tablet vertical connector */}
-                        <div className="lg:hidden flex flex-col items-center py-2">
-                            <div className="w-[3px] h-10 bg-gray-200 relative overflow-hidden">
-                                <div className="connector-fill connector-fill-1 absolute inset-0 bg-neo-text origin-top" style={{ transformOrigin: 'top center' }}></div>
-                                <div className="absolute inset-0 arch-data-flow-line-vertical"></div>
+                        <div className="lg:hidden flex flex-col items-center py-2 arch-connector-1">
+                            <div className="w-[3px] h-10 bg-neo-border relative overflow-hidden">
                             </div>
                             <CaretRight weight="bold" className="text-neo-text w-5 h-5 rotate-90" />
                         </div>
@@ -212,25 +161,21 @@ export default function ArchitecturePage() {
                         </div>
 
                         {/* Connector 2 — animated data flow line */}
-                        <div className="hidden lg:flex items-center w-[8%] relative">
-                            <div className="w-full h-[3px] bg-gray-200 relative overflow-hidden">
-                                <div className="connector-fill connector-fill-2 absolute inset-0 bg-neo-text origin-left"></div>
-                                <div className="absolute inset-0 arch-data-flow-line"></div>
+                        <div className="hidden lg:flex items-center w-[8%] relative arch-connector-2">
+                            <div className="w-full h-[3px] bg-neo-border relative overflow-hidden">
                             </div>
                             <CaretRight weight="bold" className="absolute -right-2 text-neo-text w-5 h-5" />
                         </div>
                         {/* Mobile/Tablet vertical connector */}
-                        <div className="lg:hidden flex flex-col items-center py-2">
-                            <div className="w-[3px] h-10 bg-gray-200 relative overflow-hidden">
-                                <div className="connector-fill connector-fill-2 absolute inset-0 bg-neo-text origin-top" style={{ transformOrigin: 'top center' }}></div>
-                                <div className="absolute inset-0 arch-data-flow-line-vertical"></div>
+                        <div className="lg:hidden flex flex-col items-center py-2 arch-connector-2">
+                            <div className="w-[3px] h-10 bg-neo-border relative overflow-hidden">
                             </div>
                             <CaretRight weight="bold" className="text-neo-text w-5 h-5 rotate-90" />
                         </div>
 
                         {/* Block 3: Actionable Output */}
                         <div className="arch-block-3 w-full lg:w-[28%] border-3 border-neo-border bg-white p-6 text-center group relative transition-all duration-300 hover:shadow-[6px_6px_0px_0px_var(--neo-shadow)] hover:-translate-y-1">
-                            <div className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-blue-500 status-active"></div>
+                            <div className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-accent status-active"></div>
                             <TerminalWindow weight="bold" className="w-14 h-14 mx-auto mb-4 text-neo-text transition-transform duration-300 group-hover:scale-110" />
                             <h3 className="font-black uppercase tracking-tight text-lg mb-2">Live Dashboard</h3>
                             <p className="font-mono text-xs text-gray-600">Map • Alerts • Deployment Plans</p>
@@ -257,7 +202,7 @@ export default function ArchitecturePage() {
             {/* Core Capabilities Detailed */}
             <section ref={gridRef} className="max-w-7xl mx-auto px-4 md:px-6">
                 <div className="flex items-center gap-4 mb-8">
-                    <Crosshair weight="bold" className="w-8 h-8 text-primary bg-neo-text p-1" />
+                    <Crosshair weight="bold" className="w-8 h-8 text-neo-text bg-accent p-1" />
                     <h2 className="text-2xl font-black uppercase tracking-tight">Core Capabilities</h2>
                     <div className="h-1 flex-1 bg-neo-text opacity-20"></div>
                 </div>
@@ -268,9 +213,9 @@ export default function ArchitecturePage() {
                             {/* Card Header */}
                             <div className="bg-neo-text text-white p-4 border-b-3 border-neo-border flex justify-between items-center">
                                 <span className="font-mono text-xs font-bold text-primary bg-white/10 px-2 py-1">SYS_{cap.id}</span>
-                                {idx === 0 && <MagnifyingGlass weight="bold" className="w-6 h-6 text-primary" />}
-                                {idx === 1 && <Broadcast weight="bold" className="w-6 h-6 text-primary" />}
-                                {idx === 2 && <ShieldCheck weight="bold" className="w-6 h-6 text-primary" />}
+                                {idx === 0 && <MagnifyingGlass weight="bold" className="w-6 h-6 text-accent" />}
+                                {idx === 1 && <Broadcast weight="bold" className="w-6 h-6 text-accent" />}
+                                {idx === 2 && <ShieldCheck weight="bold" className="w-6 h-6 text-accent" />}
                             </div>
 
                             {/* Card Body */}

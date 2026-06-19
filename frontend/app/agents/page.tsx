@@ -19,7 +19,7 @@ export default function AgentsPage() {
     useEffect(() => {
         // Safety net: force everything visible after 2s
         const safety = setTimeout(() => {
-            document.querySelectorAll('.flow-node, .agent-card-item, .agent-number, .agent-content').forEach(el => {
+            document.querySelectorAll('.flow-node, .agent-card-item, .agent-content').forEach(el => {
                 (el as HTMLElement).style.opacity = '1';
                 (el as HTMLElement).style.transform = 'none';
             });
@@ -57,25 +57,6 @@ export default function AgentsPage() {
                 clearProps: 'all',
             });
 
-            // Glowing traveling dot animation (Horizontal — desktop only)
-            gsap.to('.traveling-dot-x', {
-                left: "calc(100% - 4rem)",
-                duration: 2.5,
-                ease: "power1.inOut",
-                repeat: -1,
-            });
-
-            // Mobile flow connectors + nodes stagger in
-            const mobileNodes = gsap.utils.toArray('.flow-node, .flow-connector');
-            gsap.from(mobileNodes, {
-                y: 20,
-                opacity: 0,
-                duration: 0.4,
-                stagger: 0.1,
-                ease: 'power2.out',
-                clearProps: 'all',
-            });
-
             // Vertical scroll progress line
             gsap.to(progressLineRef.current, {
                 scaleY: 1,
@@ -91,6 +72,9 @@ export default function AgentsPage() {
             // Agent Cards Scroll Animation
             const cards = gsap.utils.toArray('.agent-card-wrap');
             cards.forEach((card: any, i) => {
+                // Make the first card always visible immediately without scroll animation
+                if (i === 0) return;
+
                 const isEven = i % 2 === 0;
                 
                 // Card Entrance
@@ -98,7 +82,7 @@ export default function AgentsPage() {
                     scrollTrigger: {
                         trigger: card,
                         start: 'top 85%',
-                        toggleActions: 'play none none reverse'
+                        once: true, // Appears once, stays visible on scroll back
                     },
                     x: isEven ? -80 : 80,
                     opacity: 0,
@@ -106,21 +90,6 @@ export default function AgentsPage() {
                     ease: 'power3.out',
                     clearProps: 'all',
                 });
-
-                // Parallax Number Watermark
-                const numberWatermark = card.querySelector('.agent-number');
-                if (numberWatermark) {
-                    gsap.to(numberWatermark, {
-                        scrollTrigger: {
-                            trigger: card,
-                            start: 'top bottom',
-                            end: 'bottom top',
-                            scrub: 1,
-                        },
-                        y: 100,
-                        ease: 'none'
-                    });
-                }
             });
 
             // CTA bounce
@@ -128,7 +97,7 @@ export default function AgentsPage() {
                 scrollTrigger: {
                     trigger: '.cta-section',
                     start: 'top 90%',
-                    toggleActions: 'play none none reverse'
+                    once: true, // Only bounce once
                 },
                 y: 30,
                 opacity: 0,
@@ -168,15 +137,17 @@ export default function AgentsPage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-20 overflow-hidden">
             {/* Header */}
-            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8">
-                <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                    <div className="h-8 w-8 md:h-10 md:w-10 bg-primary border-2 border-neo-border flex items-center justify-center text-neo-text shadow-neo-sm flex-shrink-0">
-                        <Brain weight="bold" className="w-5 h-5 md:w-6 md:h-6" />
+            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8 text-center">
+                <div className="inline-flex items-center gap-4 mb-4">
+                    <div className="h-14 w-14 bg-primary border-4 border-neo-border flex items-center justify-center text-neo-text shadow-[6px_6px_0px_0px_#163300]">
+                        <Brain weight="bold" className="w-8 h-8" />
                     </div>
-                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tight">Agentic Workflow</h1>
                 </div>
-                <p className="text-sm sm:text-base md:text-xl font-mono text-gray-600 max-w-3xl border-l-4 border-primary pl-4">
-                    Four specialized AI agents operating in sequence. From raw citizen input to predictive modeling to deployment-ready action plans.
+                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
+                    Agentic Workflow
+                </h1>
+                <p className="text-lg md:text-xl font-mono text-gray-700 max-w-3xl mx-auto border-b-4 border-primary pb-4 inline-block">
+                    Four AI agents transforming raw data into deployment plans.
                 </p>
             </section>
 
@@ -184,86 +155,40 @@ export default function AgentsPage() {
             <section className="max-w-7xl mx-auto px-4 md:px-6 mb-16">
                 <div className="border-4 border-neo-border bg-white p-4 sm:p-6 md:p-8 shadow-[8px_8px_0px_0px_#163300] relative z-10 overflow-hidden">
 
-                    {/* ── DESKTOP: horizontal row (md and up) ── */}
-                    <div ref={flowRef} className="hidden md:flex items-center justify-center gap-6 lg:gap-10 xl:gap-14 relative py-4 px-4 mx-auto w-max">
-                        {/* Horizontal dashed line */}
-                        <div className="absolute top-1/2 left-16 right-16 h-0 border-t-[3px] border-dashed border-gray-300 -translate-y-1/2 z-0"></div>
-                        {/* Traveling dot */}
-                        <div className="traveling-dot-x absolute top-1/2 left-16 w-4 h-4 bg-primary rounded-full shadow-[0_0_15px_#9FE870,0_0_30px_#9FE870] -translate-y-1/2 z-[1]"></div>
+                    {/* ── FLOW DIAGRAM (Responsive Horizontal Scroll) ── */}
+                    <div className="overflow-x-auto pb-6 -mx-4 px-4 md:mx-0 md:px-0">
+                        <div ref={flowRef} className="flex items-start justify-start md:justify-between gap-4 relative py-4 px-2 w-full min-w-max mx-auto">
+                            {/* Horizontal dashed line (starts/ends exactly at the center of the first/last nodes) */}
+                            <div className="absolute top-[44px] left-[48px] right-[48px] md:left-[56px] md:right-[56px] h-0 border-t-[3px] border-dashed border-gray-300 z-0"></div>
 
-                        {/* Input Node */}
-                        <div className="flow-node relative z-10 flex flex-col items-center gap-3 w-24">
-                            <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-gray-100 flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform">
-                                <Database weight="fill" className="w-7 h-7" />
-                            </div>
-                            <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-0.5 border-2 border-neo-border">Raw Data</span>
-                        </div>
-
-                        {/* Agent Nodes */}
-                        {DATA.agents.map((agent, idx) => (
-                            <div key={idx} className="flow-node relative z-10 flex flex-col items-center gap-2 w-24">
-                                <div className={`w-14 h-14 border-3 border-neo-border flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform ${agent.color === 'dark' ? 'bg-neo-text text-primary border-primary' : 'bg-primary text-neo-text'}`}>
-                                    {getIconForAgent(agent.id)}
+                            {/* Input Node */}
+                            <div className="flow-node relative z-10 flex flex-col items-center gap-3 w-20 md:w-24 shrink-0">
+                                <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-gray-100 flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform">
+                                    <Database weight="fill" className="w-7 h-7" />
                                 </div>
-                                <div className="flex flex-col items-center text-center bg-white px-1.5 py-0.5 border-2 border-neo-border">
-                                    <span className="font-mono text-[8px] font-bold text-gray-500">AGENT {agent.number}</span>
-                                    <span className="font-mono text-[10px] font-bold uppercase leading-tight">{agent.shortName}</span>
-                                </div>
+                                <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-0.5 border-2 border-neo-border">Raw Data</span>
                             </div>
-                        ))}
 
-                        {/* Output Node */}
-                        <div className="flow-node relative z-10 flex flex-col items-center gap-2 w-24">
-                            <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-accent flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform">
-                                <ClipboardText weight="fill" className="w-7 h-7" />
-                            </div>
-                            <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-0.5 border-2 border-neo-border">Action Plan</span>
-                        </div>
-                    </div>
-
-                    {/* ── MOBILE: vertical stack (below md) ── */}
-                    <div className="flex md:hidden flex-col items-center gap-0 relative py-2">
-
-                        {/* Input Node */}
-                        <div className="flow-node relative z-10 flex flex-col items-center gap-2 py-2">
-                            <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-gray-100 flex items-center justify-center shadow-[3px_3px_0px_0px_#163300]">
-                                <Database weight="fill" className="w-7 h-7" />
-                            </div>
-                            <span className="font-mono text-xs font-bold uppercase bg-white px-3 py-1 border-2 border-neo-border">Raw Data</span>
-                        </div>
-                        {/* Arrow down */}
-                        <div className="flow-connector flex flex-col items-center text-primary">
-                            <div className="w-0.5 h-5 bg-gray-300"></div>
-                            <CaretDown weight="bold" className="w-5 h-5 -mt-1 animate-bounce" />
-                        </div>
-
-                        {/* Agent Nodes — 2×2 grid */}
-                        <div className="flow-node grid grid-cols-2 gap-3 w-full max-w-[280px] py-2">
+                            {/* Agent Nodes */}
                             {DATA.agents.map((agent, idx) => (
-                                <div key={idx} className="flex flex-col items-center gap-2">
-                                    <div className={`w-12 h-12 border-3 border-neo-border flex items-center justify-center shadow-[2px_2px_0px_0px_#163300] ${agent.color === 'dark' ? 'bg-neo-text text-primary border-primary' : 'bg-primary text-neo-text'}`}>
+                                <div key={idx} className="flow-node relative z-10 flex flex-col items-center gap-2 w-20 md:w-24 shrink-0">
+                                    <div className={`w-14 h-14 border-3 border-neo-border flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform ${agent.color === 'dark' ? 'bg-neo-text text-primary border-primary' : 'bg-primary text-neo-text'}`}>
                                         {getIconForAgent(agent.id)}
                                     </div>
-                                    <div className="flex flex-col items-center text-center bg-white px-1 py-0.5 border-2 border-neo-border">
-                                        <span className="font-mono text-[7px] font-bold text-gray-500">AGENT {agent.number}</span>
-                                        <span className="font-mono text-[9px] font-bold uppercase leading-tight">{agent.shortName}</span>
+                                    <div className="flex flex-col items-center text-center bg-white px-1.5 py-0.5 border-2 border-neo-border">
+                                        <span className="font-mono text-[8px] font-bold text-gray-500">AGENT {agent.number}</span>
+                                        <span className="font-mono text-[10px] font-bold uppercase leading-tight">{agent.shortName}</span>
                                     </div>
                                 </div>
                             ))}
-                        </div>
 
-                        {/* Arrow down */}
-                        <div className="flow-connector flex flex-col items-center text-primary">
-                            <div className="w-0.5 h-5 bg-gray-300"></div>
-                            <CaretDown weight="bold" className="w-5 h-5 -mt-1 animate-bounce" />
-                        </div>
-
-                        {/* Output Node */}
-                        <div className="flow-node relative z-10 flex flex-col items-center gap-2 py-2">
-                            <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-accent flex items-center justify-center shadow-[3px_3px_0px_0px_#163300]">
-                                <ClipboardText weight="fill" className="w-7 h-7" />
+                            {/* Output Node */}
+                            <div className="flow-node relative z-10 flex flex-col items-center gap-2 w-20 md:w-24 shrink-0">
+                                <div className="w-14 h-14 rounded-full border-3 border-neo-border bg-accent flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:scale-110 transition-transform">
+                                    <ClipboardText weight="fill" className="w-7 h-7" />
+                                </div>
+                                <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-0.5 border-2 border-neo-border">Action Plan</span>
                             </div>
-                            <span className="font-mono text-xs font-bold uppercase bg-white px-3 py-1 border-2 border-neo-border">Action Plan</span>
                         </div>
                     </div>
 
@@ -294,7 +219,7 @@ export default function AgentsPage() {
                                 <div className={`w-full md:w-[45%] agent-card-item border-3 md:border-4 border-neo-border p-4 sm:p-6 md:p-8 ${getColorClasses(agent.color)} relative overflow-hidden group transition-transform duration-300`}>
                                     
                                     {/* Number Watermark Parallax */}
-                                    <div className="agent-number absolute -right-2 -top-4 text-[60px] md:text-[100px] font-black opacity-[0.05] leading-none pointer-events-none transition-transform">
+                                    <div className="agent-number absolute right-0 top-0 sm:right-2 sm:top-2 text-[50px] sm:text-[80px] md:text-[100px] font-black opacity-[0.15] leading-none pointer-events-none transition-transform">
                                         {agent.number}
                                     </div>
 
@@ -347,7 +272,7 @@ export default function AgentsPage() {
 
             {/* CTA */}
             <section className="cta-section max-w-7xl mx-auto px-4 md:px-6 mt-10 md:mt-16 pb-8 md:pb-12 text-center relative z-10">
-                <Link href="/dashboard" className="cta-btn inline-flex items-center gap-2 md:gap-3 bg-neo-text text-primary font-black uppercase text-sm sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-4 md:py-6 border-3 md:border-4 border-primary shadow-[6px_6px_0px_0px_#9FE870] md:shadow-[8px_8px_0px_0px_#9FE870] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-300 group">
+                <Link href="/dashboard" className="cta-btn inline-flex items-center gap-2 md:gap-3 bg-accent text-neo-text font-black uppercase text-sm sm:text-lg md:text-xl px-6 sm:px-8 md:px-10 py-4 md:py-6 border-3 md:border-4 border-neo-border shadow-[6px_6px_0px_0px_#163300] md:shadow-[8px_8px_0px_0px_#163300] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none  group">
                     Test Pipeline in Dashboard 
                     <ArrowRight weight="bold" className="w-6 h-6 md:w-8 md:h-8 group-hover:translate-x-2 transition-transform" />
                 </Link>

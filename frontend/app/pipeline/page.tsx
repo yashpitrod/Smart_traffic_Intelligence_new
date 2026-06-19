@@ -1,6 +1,6 @@
 'use client';
 
-import { Database, Table, Funnel, ChartBar, Gear, Brain, ArrowRight, CaretDown } from '@phosphor-icons/react';
+import { Database, Table, Gear, Brain, ArrowRight } from '@phosphor-icons/react';
 import { DATA } from '@/components/constants';
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
@@ -123,15 +123,17 @@ export default function JourneyPage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-24 overflow-hidden">
             {/* Header */}
-            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="h-10 w-10 bg-neo-text flex items-center justify-center text-primary shadow-neo-sm">
-                        <Database weight="bold" className="w-6 h-6" />
+            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8 text-center">
+                <div className="inline-flex items-center gap-4 mb-4">
+                    <div className="h-14 w-14 bg-neo-text border-4 border-neo-border flex items-center justify-center text-primary shadow-[6px_6px_0px_0px_#9FE870]">
+                        <Database weight="bold" className="w-8 h-8" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight">Data Pipeline</h1>
                 </div>
-                <p className="text-xl font-mono text-gray-600 max-w-3xl border-l-4 border-primary pl-4">
-                    How we process 8,173 real Bengaluru incidents into predictive signals.
+                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
+                    Data Pipeline
+                </h1>
+                <p className="text-lg md:text-xl font-mono text-gray-700 max-w-3xl mx-auto border-b-4 border-primary pb-4 inline-block">
+                    Processing 8,173 real incidents into predictive signals.
                 </p>
             </section>
 
@@ -279,7 +281,7 @@ export default function JourneyPage() {
 
             {/* CTA */}
             <section className="max-w-7xl mx-auto px-4 md:px-6 mt-20 text-center">
-                <Link href="/dashboard" className="inline-flex items-center gap-3 bg-neo-text text-primary font-black uppercase text-xl px-10 py-6 border-4 border-primary shadow-[8px_8px_0px_0px_#9FE870] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-300 group">
+                <Link href="/dashboard" className="inline-flex items-center gap-3 bg-accent text-neo-text font-black uppercase text-xl px-10 py-6 border-4 border-neo-border shadow-[8px_8px_0px_0px_#163300] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all duration-300 group">
                     See Models in Action 
                     <ArrowRight weight="bold" className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
                 </Link>

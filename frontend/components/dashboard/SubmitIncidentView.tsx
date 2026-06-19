@@ -14,6 +14,27 @@ const MODEL_OPTIONS = [
     { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B',   provider: 'Meta',   badge: 'Smart' },
 ] as const;
 
+// ---------------------------------------------------------------------------
+// Vehicle-type applicability per event cause
+// ---------------------------------------------------------------------------
+/** Causes where a specific vehicle IS the source of the incident. Dropdown shown + required-ish. */
+const CAUSES_VEHICLE_REQUIRED = new Set([
+    'vehicle_breakdown',
+    'accident',
+]);
+
+/** Causes where NO vehicle is involved — field is irrelevant (auto-set to null). */
+const CAUSES_NO_VEHICLE = new Set([
+    'tree_fall',
+    'water_logging',
+    'pot_holes',
+    'construction',
+    'public_event',
+]);
+
+/** All other causes (others, procession, vip_movement, protest, congestion, etc.)
+ *  will show the dropdown as optional — default is "unknown". */
+
 type ModelId = typeof MODEL_OPTIONS[number]['id'];
 
 interface ResolvedLocation {
@@ -29,7 +50,7 @@ interface SubmitIncidentViewProps {
 }
 
 export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: SubmitIncidentViewProps) {
-    const [mode, setMode] = useState<'nlp' | 'structured'>('nlp');
+    const [mode, setMode] = useState<'nlp' | 'structured'>('structured');
     const [description, setDescription] = useState('');
     const [selectedModel, setSelectedModel] = useState<ModelId | null>(null);
 
@@ -38,7 +59,9 @@ export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: Submit
     const [eventCause, setEventCause] = useState('vehicle_breakdown');
     const [zone, setZone] = useState('');
     const [corridorRank, setCorridorRank] = useState('0');
-    const [vehType, setVehType] = useState('private_car');
+    // 'unknown' → sends null to backend (model trained with null→'unknown' fill)
+    // 'none'    → cause has no vehicle; also sends null but field is hidden
+    const [vehType, setVehType] = useState('unknown');
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -110,11 +133,20 @@ export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: Submit
 
         const eventTypeStr = eventType === '1' ? 'planned' : 'unplanned';
 
+        // Resolve the veh_type to send to the backend:
+        // • No-vehicle causes           → always null (model trained on null→'unknown' fill)
+        // • 'unknown' selection          → null (let model use its learned default)
+        // • Any real vehicle type        → send the value
+        const resolvedVehType: string | null =
+            CAUSES_NO_VEHICLE.has(eventCause)
+                ? null
+                : (vehType === 'unknown' || vehType === 'none' ? null : vehType);
+
         let features: any = featuresOverride || {
             event_type: eventTypeStr,
             corridor: corridorNames[corridorRank] || 'Non-corridor',
             event_cause: eventCause,
-            veh_type: vehType,
+            veh_type: resolvedVehType,
             requires_road_closure: false,
             start_datetime: new Date().toISOString(),
             zone: location.name,
@@ -126,7 +158,11 @@ export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: Submit
 
         if (mode === 'nlp' && nlpResult) {
             features.event_cause = nlpResult.root_cause || features.event_cause;
-            if (nlpResult.vehicle_type) features.veh_type = nlpResult.vehicle_type;
+            // NLP returns null when no vehicle is mentioned — honour that by explicitly
+            // setting null rather than leaving the form's default value in place.
+            if ('vehicle_type' in nlpResult) {
+                features.veh_type = nlpResult.vehicle_type || null;
+            }
         }
 
         const prediction = await predictIncident(features);
@@ -255,27 +291,27 @@ export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: Submit
                     </h2>
 
                     {/* Mode Toggles */}
-                    <div className="flex mb-8 border-3 border-neo-border">
-                        <button
-                            type="button"
-                            onClick={() => setMode('nlp')}
-                            className={`flex-1 py-3 font-mono font-bold uppercase flex justify-center items-center gap-2 transition-all ${
-                                mode === 'nlp' ? 'bg-neo-primary text-neo-text' : 'bg-white hover:bg-neo-secondary'
-                            }`}
-                        >
-                            <TextAUnderline size={20} weight="bold" />
-                            Raw Text
-                        </button>
-                        <div className="w-[3px] bg-neo-border" />
+                    <div className="flex flex-col sm:flex-row mb-8 border-3 border-neo-border">
                         <button
                             type="button"
                             onClick={() => setMode('structured')}
-                            className={`flex-1 py-3 font-mono font-bold uppercase flex justify-center items-center gap-2 transition-all ${
+                            className={`flex-1 py-3 px-2 sm:px-4 font-mono font-bold uppercase flex justify-center items-center gap-2 transition-all text-sm sm:text-base ${
                                 mode === 'structured' ? 'bg-neo-primary text-neo-text' : 'bg-white hover:bg-neo-secondary'
                             }`}
                         >
-                            <ListBullets size={20} weight="bold" />
-                            Structured
+                            <ListBullets size={20} weight="bold" className="shrink-0" />
+                            <span>Structured</span>
+                        </button>
+                        <div className="h-[3px] w-full sm:w-[3px] sm:h-auto bg-neo-border" />
+                        <button
+                            type="button"
+                            onClick={() => setMode('nlp')}
+                            className={`flex-1 py-3 px-2 sm:px-4 font-mono font-bold uppercase flex justify-center items-center gap-2 transition-all text-sm sm:text-base ${
+                                mode === 'nlp' ? 'bg-neo-primary text-neo-text' : 'bg-white hover:bg-neo-secondary'
+                            }`}
+                        >
+                            <TextAUnderline size={20} weight="bold" className="shrink-0" />
+                            <span>Raw Text</span>
                         </button>
                     </div>
 
@@ -397,22 +433,41 @@ export default function SubmitIncidentView({ onOpenPanel, onPinDropped }: Submit
                                         />
                                     </div>
                                     <div className="space-y-2">
+                                        {/* Label row: hide asterisk for no-vehicle causes */}
                                         <label className="block font-mono font-bold uppercase text-sm flex items-center gap-1">
                                             Vehicle Type
-                                            <span className="text-red-500 ml-0.5">*</span>
+                                            {CAUSES_VEHICLE_REQUIRED.has(eventCause) && (
+                                                <span className="text-red-500 ml-0.5" title="Required for this cause">*</span>
+                                            )}
+                                            {CAUSES_NO_VEHICLE.has(eventCause) && (
+                                                <span className="text-xs normal-case text-gray-400 font-normal ml-1">(not applicable)</span>
+                                            )}
                                         </label>
-                                        <select
-                                            value={vehType}
-                                            onChange={(e) => setVehType(e.target.value)}
-                                            className="w-full border-3 border-neo-border p-3 focus:outline-none focus:ring-4 focus:ring-neo-primary font-mono text-sm bg-neo-bg truncate min-w-0"
-                                        >
-                                            <option value="private_car">Private Car</option>
-                                            <option value="two_wheeler">Two Wheeler</option>
-                                            <option value="bmtc_bus">BMTC Bus</option>
-                                            <option value="heavy_vehicle">Heavy Vehicle</option>
-                                            <option value="auto">Auto Rickshaw</option>
-                                            <option value="others">Others</option>
-                                        </select>
+
+                                        {CAUSES_NO_VEHICLE.has(eventCause) ? (
+                                            /* ── No vehicle involved — show a read-only badge ── */
+                                            <div className="w-full border-3 border-neo-border p-3 bg-gray-50 font-mono text-sm text-gray-400 flex items-center gap-2 select-none">
+                                                <span className="inline-block w-2 h-2 rounded-full bg-gray-300 flex-shrink-0" />
+                                                N/A — no vehicle for this cause
+                                            </div>
+                                        ) : (
+                                            /* ── Vehicle possibly involved — show full dropdown ── */
+                                            <select
+                                                value={vehType}
+                                                onChange={(e) => setVehType(e.target.value)}
+                                                className="w-full border-3 border-neo-border p-3 focus:outline-none focus:ring-4 focus:ring-neo-primary font-mono text-sm bg-neo-bg truncate min-w-0"
+                                            >
+                                                {/* Default: unknown — backend treats null/unknown correctly */}
+                                                <option value="unknown">Unknown (auto-detect)</option>
+                                                <option disabled className="text-gray-300">──────────────</option>
+                                                <option value="private_car">Private Car</option>
+                                                <option value="two_wheeler">Two Wheeler</option>
+                                                <option value="bmtc_bus">BMTC Bus</option>
+                                                <option value="heavy_vehicle">Heavy Vehicle</option>
+                                                <option value="auto">Auto Rickshaw</option>
+                                                <option value="others">Others</option>
+                                            </select>
+                                        )}
                                     </div>
                                 </div>
                             </div>

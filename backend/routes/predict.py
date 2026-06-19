@@ -29,6 +29,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from backend.agents.prediction_agent import PredictionAgent
+from backend.data.loader import add_live_incident
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +191,14 @@ async def predict_incident(request: PredictRequest) -> PredictResponse:
         incident_data = request.model_dump(exclude_none=False)
 
         result = _agent.predict_incident(incident_data)
+
+        # Persist the submitted incident into the in-memory DataFrame so that
+        # the heatmap and anomaly detector immediately reflect the new data.
+        try:
+            add_live_incident(incident_data, result)
+        except Exception as exc:
+            # Non-fatal: prediction succeeded even if the dataset append fails.
+            logger.warning("add_live_incident failed (non-fatal): %s", exc)
 
         return PredictResponse(**result)
 

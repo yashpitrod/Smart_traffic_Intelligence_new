@@ -13,7 +13,7 @@ const MapView = dynamic(() => import('../../components/dashboard/MapView'), {
     ssr: false,
     loading: () => (
         <div className="w-full h-full flex items-center justify-center bg-neo-bg">
-            <div className="font-mono text-neo-text font-bold uppercase animate-pulse text-xl border-4 border-neo-border p-4 bg-neo-secondary shadow-neo">
+            <div className="font-mono text-neo-text font-bold uppercase text-xl border-4 border-neo-border p-4 bg-neo-secondary shadow-neo">
                 Loading Map Data...
             </div>
         </div>

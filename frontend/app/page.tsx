@@ -1,9 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowDown, ArrowUpRight, ArrowRight, Cpu, Database, Lightning as Zap, Calendar, Terminal, Brain, TreeStructure, ShieldCheck, ChartLineUp } from '@phosphor-icons/react';
+import { ArrowDown, ArrowUpRight, ArrowRight, Cpu, Database, Terminal, Brain, TreeStructure, ShieldCheck, ChartLineUp } from '@phosphor-icons/react';
 import ISTClock from '@/components/ISTClock';
-import { DATA } from "@/components/constants";
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -161,7 +160,7 @@ export default function HomePage() {
           <div className="lg:col-span-8 flex flex-col gap-6">
             <div className="border-3 border-neo-border bg-white p-4 sm:p-8 md:p-16 shadow-neo relative overflow-hidden h-full flex flex-col justify-center min-h-[320px] sm:min-h-[500px]">
               {/* Background Decoration */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-accent rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
 
               {/* Mobile: Status Badge & System Icon */}
               <div className="relative mb-12 sm:mb-8">
@@ -202,7 +201,7 @@ export default function HomePage() {
                   </span>
                 </Link>
                 <Link
-                  href="/projects"
+                  href="/agents"
                   className="hero-cta px-5 py-3 sm:px-8 sm:py-4 bg-white text-neo-text font-bold text-sm sm:text-lg uppercase tracking-wider btn-neo transition-all flex items-center justify-center gap-2 w-full"
                 >
                   Explore Agentic Workflow
@@ -219,7 +218,7 @@ export default function HomePage() {
               <div className="absolute inset-0 opacity-20 pointer-events-none">
                 <div className="absolute inset-0 bg-center"></div>
               </div>
-              <Brain weight="bold" className="w-32 h-32 text-primary animate-pulse relative z-10" />
+              <Brain weight="bold" className="w-32 h-32 text-primary relative z-10" />
               <div className="absolute bottom-4 left-4 font-mono text-[10px] text-primary/50 uppercase tracking-widest z-10">
                 4_Agent_Pipeline // Active
               </div>
@@ -231,7 +230,7 @@ export default function HomePage() {
               <div className="stat-card border-3 border-neo-border bg-white p-5 shadow-neo flex flex-col justify-between hover:bg-secondary transition-colors">
                 <div className="flex justify-between items-start">
                   <Database weight="bold" className="w-8 h-8" />
-                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-primary rounded-full"></span>
                 </div>
                 <div>
                   <AnimatedCounter value="8,173" />
@@ -251,7 +250,7 @@ export default function HomePage() {
       </section>
 
       {/* Marquee Section - Platform Capabilities */}
-      <section className="py-0 bg-primary border-y-[3px] border-neo-border relative overflow-hidden">
+      <section className="py-0 bg-accent border-y-[3px] border-neo-border relative overflow-hidden">
         <div className="text-center py-2 border-b-[3px] border-neo-border">
           <h3 className="text-sm font-bold tracking-widest uppercase inline-block">Platform Capabilities</h3>
         </div>
@@ -344,7 +343,7 @@ export default function HomePage() {
 
           {/* Architecture Card - Large Left */}
           <Link
-            href="/about"
+            href="/architecture"
             className="nav-card sm:col-span-1 md:col-span-2 md:row-span-2 relative group overflow-hidden block h-full"
           >
             <div className="border-4 border-neo-border bg-neo-text text-white p-5 sm:p-8 shadow-[5px_5px_0px_0px_#9FE870] h-full min-h-[180px] sm:min-h-[300px] md:min-h-[420px] flex flex-col justify-between transition-all duration-300 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none relative overflow-hidden">
@@ -371,7 +370,7 @@ export default function HomePage() {
 
           {/* Agents Card */}
           <Link
-            href="/projects"
+            href="/agents"
             className="nav-card sm:col-span-1 md:col-span-2 relative group block h-full"
           >
             <div className="border-4 border-neo-border bg-primary p-4 sm:p-6 shadow-neo min-h-[180px] sm:min-h-[200px] h-full flex flex-col justify-between transition-all duration-300 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none relative overflow-hidden">
@@ -397,7 +396,7 @@ export default function HomePage() {
             href="/dashboard"
             className="nav-card sm:col-span-1 md:col-span-2 relative group block h-full"
           >
-            <div className="border-4 border-neo-border bg-secondary p-4 sm:p-5 shadow-neo min-h-[180px] sm:min-h-[200px] h-full flex flex-col justify-between transition-all duration-300 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none relative overflow-hidden">
+            <div className="border-4 border-neo-border bg-accent p-4 sm:p-5 shadow-neo min-h-[180px] sm:min-h-[200px] h-full flex flex-col justify-between transition-all duration-300 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none relative overflow-hidden">
               <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-500"></div>
               <div className="absolute inset-0 pattern-diagonal opacity-5"></div>
               <div className="relative z-10">
@@ -418,7 +417,7 @@ export default function HomePage() {
 
           {/* Pipeline Card */}
           <Link
-            href="/journey"
+            href="/pipeline"
             className="nav-card sm:col-span-1 md:col-span-2 relative group block h-full"
           >
             <div className="border-4 border-neo-border bg-white p-4 sm:p-6 shadow-neo min-h-[180px] sm:min-h-[200px] h-full flex flex-col justify-between transition-all duration-300 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none relative overflow-hidden">

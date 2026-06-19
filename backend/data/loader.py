@@ -33,6 +33,7 @@ _CSV_PATH = Path(__file__).parent / "bengaluru_traffic_incidents.csv"
 # ---------------------------------------------------------------------------
 _df: Optional[pd.DataFrame] = None
 _heatmap_cache: Optional[List[Dict[str, float]]] = None
+_heatmap_max_res: float = 1440.0  # cached max resolution minutes for weight normalisation
 _analytics_cache: Optional[Dict[str, Any]] = None
 _junction_lookup: Dict[str, int] = {}
 _corridor_counts: Dict[str, int] = {}
@@ -112,12 +113,14 @@ def _build_heatmap_cache(df: pd.DataFrame) -> List[Dict[str, float]]:
         (working["latitude"] != 0) & (working["longitude"] != 0)
     ]
 
-    points = [
-        {"lat": float(row["latitude"]), "lng": float(row["longitude"]), "weight": round(float(row["weight"]), 4)}
-        for _, row in working[["latitude", "longitude", "weight"]].iterrows()
-    ]
+    points = (
+        working[["latitude", "longitude", "weight"]]
+        .rename(columns={"latitude": "lat", "longitude": "lng"})
+        .assign(weight=lambda df: df["weight"].round(4))
+        .to_dict("records")
+    )
     logger.info("Heatmap cache built: %d points", len(points))
-    return points
+    return points, max_res
 
 
 def _build_analytics_cache(df: pd.DataFrame) -> Dict[str, Any]:
@@ -229,6 +232,25 @@ def _build_junction_lookup(df: pd.DataFrame) -> Dict[str, int]:
     lookup = junc_df.groupby("junction").size().to_dict()
     return {k: int(v) for k, v in lookup.items()}
 
+def _compute_single_heatmap_point(
+    lat: float, lng: float, priority: str, resolution_minutes: Optional[float]
+) -> Optional[Dict[str, float]]:
+    """
+    Compute a single heatmap weight point using the same formula as
+    _build_heatmap_cache, normalising against the cached max_res.
+    Returns None if coordinates are invalid.
+    """
+    if not lat or not lng or lat == 0 or lng == 0:
+        return None
+    base = 2.0 if str(priority).strip().lower() == "high" else 1.0
+    if resolution_minutes and 0 < resolution_minutes <= 1440:
+        factor = min(float(resolution_minutes), 1440.0) / _heatmap_max_res
+    else:
+        factor = 0.5  # null / invalid — same fallback as _build_heatmap_cache
+    weight = round(base * factor, 4)
+    return {"lat": lat, "lng": lng, "weight": weight}
+
+
 def _build_corridor_counts(df: pd.DataFrame) -> Dict[str, int]:
     """Return corridor → occurrence count mapping for PredictionAgent."""
     counts = df["corridor"].value_counts().to_dict()
@@ -245,7 +267,7 @@ def load_dataset() -> None:
     Called once from ``main.py`` during the FastAPI startup event.
     Idempotent — safe to call multiple times.
     """
-    global _df, _heatmap_cache, _analytics_cache, _junction_lookup, _corridor_counts
+    global _df, _heatmap_cache, _heatmap_max_res, _analytics_cache, _junction_lookup, _corridor_counts
 
     if _df is not None:
         logger.debug("Dataset already loaded — skipping reload.")
@@ -268,7 +290,7 @@ def load_dataset() -> None:
 
     # Pre-compute all caches
     logger.info("Pre-computing heatmap cache …")
-    _heatmap_cache = _build_heatmap_cache(_df)
+    _heatmap_cache, _heatmap_max_res = _build_heatmap_cache(_df)
 
     logger.info("Pre-computing analytics cache …")
     _analytics_cache = _build_analytics_cache(_df)
@@ -368,7 +390,7 @@ def add_live_incident(incident_data: Dict[str, Any], prediction_result: Dict[str
     
     # Concatenate and update the global dataframe
     _df = pd.concat([_df, new_df], ignore_index=True)
-    logger.info(f"Added 1 live incident to dataset. Total records now: {len(_df)}")
+    logger.info("Added 1 live incident to dataset. Total records now: %d", len(_df))
     
     # We could rebuild caches here, but for the hackathon, we only need
     # to rebuild the heatmap cache so the map updates instantly.
@@ -376,7 +398,14 @@ def add_live_incident(incident_data: Dict[str, Any], prediction_result: Dict[str
     global _heatmap_cache
     if _heatmap_cache is not None:
         try:
-            _heatmap_cache = _build_heatmap_cache(_df)
-            logger.info("Rebuilt heatmap cache with new live incident.")
+            point = _compute_single_heatmap_point(
+                lat=float(resolved_lat),
+                lng=float(resolved_lng),
+                priority=prediction_result.get("priority", "Low"),
+                resolution_minutes=prediction_result.get("estimated_duration_minutes"),
+            )
+            if point is not None:
+                _heatmap_cache = _heatmap_cache + [point]
+                logger.info("Appended 1 live incident point to heatmap cache (O(1)).")
         except Exception as e:
-            logger.error(f"Error rebuilding heatmap cache: {e}")
+            logger.error("Error appending live incident to heatmap cache: %s", e)

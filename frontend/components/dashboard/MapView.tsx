@@ -293,7 +293,7 @@ export default function MapView({ onOpenPanel, incidentPins = [], onNewIncident 
             }
         };
         poll();
-        const id = setInterval(poll, 13000);
+        const id = setInterval(poll, 10000);
         return () => clearInterval(id);
     }, [anomalyPollKey]);
 

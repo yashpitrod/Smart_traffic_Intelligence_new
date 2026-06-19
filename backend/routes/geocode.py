@@ -33,6 +33,7 @@ Response shapes:
     }
 """
 
+import asyncio
 import json
 import logging
 import os
@@ -188,7 +189,9 @@ async def geocode_zone(request: GeocodeZoneRequest) -> Dict[str, Any]:
 
     logger.info("Geocoding zone: %r", zone_input)
 
-    result = _call_groq(zone_input)
+    # Run the synchronous Groq HTTP call in a thread pool so it does not
+    # block the asyncio event loop (and therefore other concurrent requests).
+    result = await asyncio.to_thread(_call_groq, zone_input)
 
     if result is None:
         return {

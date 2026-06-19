@@ -16,7 +16,7 @@ Streams the LLM action plan token-by-token as SSE events.
 import logging
 from typing import Optional, Union
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -85,7 +85,6 @@ class ActionPlanRequest(BaseModel):
     tags=["Action Plan"],
 )
 async def post_action_plan(
-    request: Request,
     body: ActionPlanRequest,
 ) -> StreamingResponse:
     """

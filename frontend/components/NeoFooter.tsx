@@ -44,9 +44,9 @@ export default function NeoFooter() {
                     <div className="flex items-center gap-4 font-mono text-[10px] font-bold text-neo-text/60 uppercase">
                         <span>Agentic AI for Bengaluru Traffic</span>
                         <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-primary animate-pulse" />
-                            <div className="w-2 h-2 bg-black animate-pulse delay-75" />
-                            <div className="w-2 h-2 bg-primary animate-pulse delay-150" />
+                            <div className="w-2 h-2 bg-primary" />
+                            <div className="w-2 h-2 bg-black delay-75" />
+                            <div className="w-2 h-2 bg-primary delay-150" />
                         </div>
                     </div>
                 </div>

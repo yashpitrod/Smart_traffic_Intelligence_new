@@ -211,7 +211,7 @@ Isolation Forest internally tries to isolate this point by making random splits 
 
 We convert this to a human-readable alert level: scores above 0 = Normal, 0 to -0.1 = Watch, below -0.1 = Critical. These thresholds are tuned by inspecting the score distribution across the dataset.
 
-The agent runs every 0.09 seconds during the demo by streaming new incidents sequentially from the dataset into a pure per-zone accumulator (incidents are never removed; they only accumulate over time), computing the three statistics from the current accumulated state, feeding them to the trained model, and returning the scores. Once the dataset is exhausted, the replay loop stops and freezes at the final state. The frontend polls `/anomaly` every 13 seconds and updates the zone cards and map polygon colors.
+The agent runs every 0.09 seconds during the demo by streaming new incidents sequentially from the dataset into a per-zone sliding-window deque (incidents older than 24 hours of simulated time are evicted), computing the three statistics from the current window's state, feeding them to the trained model, and returning the scores. Once the dataset is exhausted, the replay loop stops and freezes at the final state. The frontend polls `/anomaly` every 5 seconds and updates the zone cards and map polygon colors.
 
 Output per zone: `{ zone, alert_level, incident_count, high_priority_ratio, mean_duration, anomaly_score }`.
 

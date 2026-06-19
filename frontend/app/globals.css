@@ -165,19 +165,15 @@
 }
 
 .agent-pulse {
-  animation: pulseGlow 2s ease-in-out infinite;
 }
 
 .agent-pulse-delay-1 {
-  animation: pulseGlow 2s ease-in-out infinite 0.5s;
 }
 
 .agent-pulse-delay-2 {
-  animation: pulseGlow 2s ease-in-out infinite 1s;
 }
 
 .agent-pulse-delay-3 {
-  animation: pulseGlow 2s ease-in-out infinite 1.5s;
 }
 
 /* Architecture page data-flow connector animations */
@@ -227,7 +223,7 @@
   width: 40%;
   height: calc(100% + 2px);
   background: linear-gradient(90deg, transparent, var(--neo-primary), rgba(159, 232, 112, 0.8), transparent);
-  animation: archDataFlow 2.5s ease-in-out infinite;
+  animation: archDataFlow 0.6s linear infinite;
   border-radius: 2px;
 }
 
@@ -243,7 +239,7 @@
   height: 40%;
   width: calc(100% + 2px);
   background: linear-gradient(180deg, transparent, var(--neo-primary), rgba(159, 232, 112, 0.8), transparent);
-  animation: archDataFlowVertical 2.5s ease-in-out infinite;
+  animation: archDataFlowVertical 0.6s linear infinite;
   border-radius: 2px;
 }
 
@@ -254,7 +250,6 @@
 }
 
 .status-active {
-  animation: statusBlink 1.5s ease-in-out infinite;
 }
 
 /* Counter animation helper */

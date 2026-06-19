@@ -41,11 +41,11 @@ export default function NeoNavbar() {
                             </div>
                         </Link>
                         {[
-                            { href: '/about', label: 'Architecture' },
-                            { href: '/projects', label: 'Agents' },
+                            { href: '/architecture', label: 'Architecture' },
+                            { href: '/agents', label: 'Agents' },
                             { href: '/dashboard', label: 'Dashboard' },
-                            { href: '/journey', label: 'Pipeline' },
-                            { href: '/contact', label: 'Team' },
+                            { href: '/pipeline', label: 'Pipeline' },
+                            { href: '/team', label: 'Team' },
                         ].map((link, idx) => (
                             <Link
                                 key={idx}
@@ -69,11 +69,11 @@ export default function NeoNavbar() {
                 <div className="min-[780px]:hidden absolute top-full left-0 w-full h-[calc(100vh-67px)] md:h-[calc(100vh-83px)] bg-neo-bg bg-grid p-8 flex flex-col gap-5 overflow-y-auto z-40 border-t-3 border-neo-border">
                     {[
                         { href: '/', label: 'Home' },
-                        { href: '/about', label: 'Architecture' },
-                        { href: '/projects', label: 'Agents' },
+                        { href: '/architecture', label: 'Architecture' },
+                        { href: '/agents', label: 'Agents' },
                         { href: '/dashboard', label: 'Dashboard' },
-                        { href: '/journey', label: 'Pipeline' },
-                        { href: '/contact', label: 'Team' },
+                        { href: '/pipeline', label: 'Pipeline' },
+                        { href: '/team', label: 'Team' },
                     ].map((link, idx) => (
                         <Link
                             key={idx}

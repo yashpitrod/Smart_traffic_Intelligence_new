@@ -14,6 +14,7 @@ Vocabulary bridge:
   so no label ever silently maps to -1 in feature_engineering.py.
 """
 
+import asyncio
 import logging
 from typing import Any, Dict, Optional
 
@@ -208,9 +209,10 @@ async def nlp_parse(request: NLPParseRequest) -> Any:
         )
 
     try:
-        raw_result = _nlp_parser.parse_description(
+        raw_result = await asyncio.to_thread(
+            _nlp_parser.parse_description,
             request.description,
-            model_name=request.model,
+            request.model,
         )
         # Normalize vocabulary so the frontend always sends encoder-compatible
         # labels to POST /predict.
