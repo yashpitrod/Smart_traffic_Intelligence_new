@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, GithubLogo, LinkedinLogo, ArrowUpRight, ArrowRight, Code, BookOpen, TerminalWindow, TreeStructure, Brain, PaintBrush, UserFocus } from '@phosphor-icons/react';
+import { Users, GithubLogo, LinkedinLogo, ArrowUpRight, ArrowRight, Code, BookOpen, TerminalWindow, TreeStructure, Brain, PaintBrush, UserFocus, Stack } from '@phosphor-icons/react';
 import { DATA } from '@/components/constants';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
@@ -80,43 +80,49 @@ export default function TeamPage() {
                 <div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         
-                        {/* Member 1: The Systems Architect (Hacker/Terminal Theme) */}
+                        {/* Member 1: Siddhi Biyani */}
                         <div className="team-card border-4 border-neo-border bg-neo-text text-white p-5 shadow-[6px_6px_0px_0px_#9FE870] group hover:-translate-y-2 hover:shadow-[10px_10px_0px_0px_#9FE870] transition-all relative overflow-hidden flex flex-col items-center text-center h-full">
-                            <div className="w-16 h-16 bg-black border-2 border-primary mb-3 flex items-center justify-center relative z-10 rounded-full">
-                                <UserFocus weight="bold" className="w-8 h-8 text-primary" />
+                            <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 animate-pulse pointer-events-none"></div>
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-xl animate-[pulse_4s_ease-in-out_infinite]"></div>
+                            <div className="w-16 h-16 bg-black border-2 border-primary mb-3 flex items-center justify-center relative z-10 rounded-full group-hover:scale-110 transition-transform">
+                                <TerminalWindow weight="bold" className="w-8 h-8 text-primary" />
                             </div>
-                            <div className="relative z-10 flex-1 flex items-center justify-center">
-                                <h3 className="text-xl font-black uppercase tracking-tight text-primary">{DATA.team[0]?.name || "Lead Dev"}</h3>
+                            <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full">
+                                <h3 className="text-xl font-black uppercase tracking-tight text-primary mb-1">{DATA.team[0]?.name || "Siddhi Biyani"}</h3>
                             </div>
                         </div>
 
-                        {/* Member 2: The ML Engineer (Data/Graph Theme) */}
+                        {/* Member 2: Yash Pitroda */}
                         <div className="team-card border-4 border-neo-border bg-white p-5 shadow-[6px_6px_0px_0px_#163300] group hover:-translate-y-2 hover:shadow-[10px_10px_0px_0px_#163300] transition-all relative overflow-hidden flex flex-col items-center text-center h-full">
-                            <div className="w-16 h-16 bg-accent border-3 border-neo-border mb-3 flex items-center justify-center relative z-10 overflow-hidden rounded-full">
+                            <div className="absolute inset-0 pattern-grid-lg opacity-5 animate-[ping_10s_ease-in-out_infinite] pointer-events-none"></div>
+                            <div className="w-16 h-16 bg-accent border-3 border-neo-border mb-3 flex items-center justify-center relative z-10 overflow-hidden rounded-full group-hover:rotate-12 transition-transform">
                                 <TreeStructure weight="bold" className="w-8 h-8 text-neo-text" />
                             </div>
-                            <div className="relative z-10 flex-1 flex items-center justify-center">
-                                <h3 className="text-xl font-black uppercase tracking-tight text-neo-text">{DATA.team[1]?.name || "ML Eng"}</h3>
+                            <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full">
+                                <h3 className="text-xl font-black uppercase tracking-tight text-neo-text mb-1">{DATA.team[1]?.name || "Yash Pitroda"}</h3>
                             </div>
                         </div>
 
-                        {/* Member 3: The AI Agent Dev (Glowing/Neuromancer Theme) */}
+                        {/* Member 3: Amar Kumar */}
                         <div className="team-card border-4 border-neo-border bg-black text-white p-5 shadow-[6px_6px_0px_0px_#a0e1e1] group hover:-translate-y-2 hover:shadow-[10px_10px_0px_0px_#a0e1e1] transition-all relative overflow-hidden flex flex-col items-center text-center h-full">
+                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-50 animate-[pulse_2s_ease-in-out_infinite]"></div>
                             <div className="w-16 h-16 bg-transparent border-2 border-accent mb-3 flex items-center justify-center relative z-10 rounded-full">
-                                <Brain weight="fill" className="w-8 h-8 text-accent drop-shadow-[0_0_8px_rgba(160,225,225,0.8)]" />
+                                <Brain weight="fill" className="w-8 h-8 text-accent drop-shadow-[0_0_8px_rgba(160,225,225,0.8)] animate-[pulse_3s_ease-in-out_infinite]" />
                             </div>
-                            <div className="relative z-10 flex-1 flex items-center justify-center">
-                                <h3 className="text-xl font-black uppercase tracking-tight text-accent">{DATA.team[2]?.name || "AI Dev"}</h3>
+                            <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full">
+                                <h3 className="text-xl font-black uppercase tracking-tight text-accent mb-1">{DATA.team[2]?.name || "Amar Kumar"}</h3>
                             </div>
                         </div>
 
-                        {/* Member 4: The Frontend Engineer (Creative/Pixel Theme) */}
+                        {/* Member 4: Sagar Sarangi */}
                         <div className="team-card border-4 border-neo-border bg-primary p-5 shadow-[6px_6px_0px_0px_#163300] group hover:-translate-y-2 hover:shadow-[10px_10px_0px_0px_#163300] transition-all relative overflow-hidden flex flex-col items-center text-center h-full">
-                            <div className="w-16 h-16 bg-white border-4 border-neo-border mb-3 flex items-center justify-center relative z-10 rounded-full group-hover:rotate-12 transition-transform">
-                                <PaintBrush weight="bold" className="w-8 h-8 text-neo-text" />
+                            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            <div className="absolute -left-8 top-1/2 w-16 h-16 bg-white/30 rounded-full blur-md animate-[bounce_4s_infinite]"></div>
+                            <div className="w-16 h-16 bg-white border-4 border-neo-border mb-3 flex items-center justify-center relative z-10 rounded-full group-hover:-translate-y-2 transition-transform">
+                                <Stack weight="bold" className="w-8 h-8 text-neo-text" />
                             </div>
-                            <div className="relative z-10 flex-1 flex items-center justify-center">
-                                <h3 className="text-xl font-black uppercase tracking-tight text-neo-text">{DATA.team[3]?.name || "UI/UX Dev"}</h3>
+                            <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full">
+                                <h3 className="text-xl font-black uppercase tracking-tight text-neo-text mb-1">{DATA.team[3]?.name || "Sagar Sarangi"}</h3>
                             </div>
                         </div>
 
@@ -162,7 +168,7 @@ export default function TeamPage() {
                                 <span className="flex items-center gap-3 font-mono text-sm font-bold uppercase"><GithubLogo weight="bold" className="w-6 h-6"/> GitHub Repo</span>
                                 <ArrowUpRight weight="bold" className="w-5 h-5 group-hover:rotate-45 transition-transform" />
                             </a>
-                            <a href="https://github.com/SiddhiB-05/Smart_traffic_Intelligence" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-3 border-neo-border bg-white p-4 hover:bg-primary hover:-translate-y-1 transition-all group shadow-sm hover:shadow-neo-sm">
+                            <a href="https://github.com/SiddhiB-05/Smart_traffic_Intelligence/blob/main/README.md" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-3 border-neo-border bg-white p-4 hover:bg-primary hover:-translate-y-1 transition-all group shadow-sm hover:shadow-neo-sm">
                                 <span className="flex items-center gap-3 font-mono text-sm font-bold uppercase"><BookOpen weight="bold" className="w-6 h-6"/> Documentation</span>
                                 <ArrowUpRight weight="bold" className="w-5 h-5 group-hover:rotate-45 transition-transform" />
                             </a>

@@ -162,10 +162,10 @@ export const DATA: SystemData = {
   ],
 
   team: [
-    { name: "Team Member 1", role: "Lead Developer", focus: "System Architecture & Full-Stack" },
-    { name: "Team Member 2", role: "ML Engineer", focus: "XGBoost Models & Feature Engineering" },
-    { name: "Team Member 3", role: "AI Agent Developer", focus: "NLP Parsing & Action Planning" },
-    { name: "Team Member 4", role: "Frontend Engineer", focus: "Dashboard & Visualization" },
+    { name: "Siddhi Biyani", role: "Lead Developer", focus: "System Architecture & Full-Stack" },
+    { name: "Yash Pitroda", role: "ML Engineer", focus: "XGBoost Models & Feature Engineering" },
+    { name: "Amar Kumar", role: "AI Agent Developer", focus: "NLP Parsing & Action Planning" },
+    { name: "Sagar Sarangi", role: "Frontend Engineer", focus: "Dashboard & Visualization" },
   ],
 
   capabilities: [

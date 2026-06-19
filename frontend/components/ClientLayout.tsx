@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import NeoNavbar from './NeoNavbar';
 import NeoFooter from './NeoFooter';
+import { useEffect } from 'react';
 
 export default function ClientLayout({
   children,
@@ -10,6 +11,10 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>

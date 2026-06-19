@@ -52,7 +52,7 @@ function AnimatedCounter({ value, suffix = '' }: { value: string; suffix?: strin
     });
   }, [value, suffix]);
 
-  return <h3 ref={ref} className="font-black text-4xl counter-value">0</h3>;
+  return <h3 ref={ref} className="font-black text-2xl sm:text-3xl md:text-4xl counter-value">0</h3>;
 }
 
 export default function HomePage() {
@@ -259,7 +259,7 @@ export default function HomePage() {
           <div className="flex w-max animate-marquee">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center gap-20 px-10">
-                <div className="md:text-4xl text-2xl font-black text-neo-text tracking-tight uppercase">
+                <div className="md:text-4xl text-lg sm:text-2xl font-black text-neo-text tracking-tight uppercase">
                   Real-time Anomaly Detection
                 </div>
                 <div className="md:text-4xl text-2xl font-black text-neo-text tracking-tight uppercase">

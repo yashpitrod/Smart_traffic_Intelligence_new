@@ -86,6 +86,7 @@ export default function DashboardPage() {
                         <MapView
                             onOpenPanel={openPanelWithData}
                             incidentPins={incidentPins}
+                            onNewIncident={() => setActiveView('submit')}
                         />
                     )}
                     {activeView === 'submit' && (

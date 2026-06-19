@@ -13,7 +13,7 @@ import {
     predictIncident,
     resetAnomalyReplay,
 } from '../../lib/api';
-import { WarningCircle, ArrowRight, ListDashes, X, ArrowsClockwise, Play, Stop, Robot } from '@phosphor-icons/react';
+import { WarningCircle, ArrowRight, ListDashes, X, ArrowsClockwise, Play, Stop, Robot, Plus } from '@phosphor-icons/react';
 import type { IncidentPin } from '../../types/index';
 
 // ---------------------------------------------------------------------------
@@ -217,12 +217,14 @@ interface MapViewProps {
     onOpenPanel: (data: any) => void;
     /** Live incident pins from View 2 submissions — persists across map mode switches. */
     incidentPins?: IncidentPin[];
+    /** Callback to switch to submit view. */
+    onNewIncident?: () => void;
 }
 
 // ---------------------------------------------------------------------------
 // MapView
 // ---------------------------------------------------------------------------
-export default function MapView({ onOpenPanel, incidentPins = [] }: MapViewProps) {
+export default function MapView({ onOpenPanel, incidentPins = [], onNewIncident }: MapViewProps) {
     // ── Heatmap ─────────────────────────────────────────────────────────────
     // staticHeatmap: loaded once from /heatmap (full, pre-computed dataset)
     // replayHeatmap: polled from /heatmap/replay every 5 s when replay is active
@@ -401,6 +403,18 @@ export default function MapView({ onOpenPanel, incidentPins = [] }: MapViewProps
 
             {/* ── Floating control bar (top-left) ─────────────────────────── */}
             <div className="absolute top-4 left-4 z-40 flex items-center gap-2 flex-wrap">
+
+                {/* New Incident Button */}
+                {onNewIncident && (
+                    <button
+                        onClick={onNewIncident}
+                        className="bg-neo-primary border-4 border-neo-border p-3 shadow-neo hover:bg-neo-primary-hover transition-colors flex items-center justify-center gap-2"
+                        title="Submit New Incident"
+                    >
+                        <Plus size={28} weight="bold" />
+                        <span className="font-mono font-bold uppercase hidden md:block">New Incident</span>
+                    </button>
+                )}
 
                 {/* Anomalies button */}
                 <button
