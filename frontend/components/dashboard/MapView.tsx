@@ -393,18 +393,6 @@ export default function MapView({ onOpenPanel, onSwitchToSubmit }: MapViewProps)
                     </button>
                 )}
 
-                {/* New Incident button */}
-                {onSwitchToSubmit && (
-                    <button
-                        onClick={onSwitchToSubmit}
-                        className="bg-neo-primary border-4 border-neo-border p-3 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
-                        title="Submit a new traffic incident"
-                    >
-                        <Plus size={28} weight="bold" />
-                        <span className="font-mono font-bold uppercase hidden md:block">New Incident</span>
-                    </button>
-                )}
-
                 {/* Replay status badge */}
                 <ReplayBadge status={replayStatus} pointCount={replayHeatmap.length} />
             </div>

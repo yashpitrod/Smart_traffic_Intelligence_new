@@ -149,59 +149,56 @@ export default function AgentsPage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-20 overflow-hidden">
             {/* Header */}
-            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-16 text-center">
-                <div className="inline-flex items-center gap-4 mb-6 mx-auto">
-                    <div className="h-16 w-16 bg-primary border-4 border-neo-border flex items-center justify-center text-neo-text shadow-neo">
-                        <Brain weight="fill" className="w-10 h-10" />
+            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8 text-center">
+                <div className="inline-flex items-center gap-4 mb-4 mx-auto">
+                    <div className="h-14 w-14 bg-primary border-4 border-neo-border flex items-center justify-center text-neo-text shadow-neo">
+                        <Brain weight="fill" className="w-8 h-8" />
                     </div>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight leading-none mb-6">
+                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
                     Agentic Workflow
                 </h1>
-                <p className="text-xl md:text-2xl font-mono text-gray-700 max-w-3xl mx-auto">
+                <p className="text-lg md:text-xl font-mono text-gray-700 max-w-3xl mx-auto">
                     Four specialized AI agents operating in sequence. From raw citizen input to predictive modeling to deployment-ready action plans.
                 </p>
-                <div className="mt-12 animate-bounce flex justify-center">
-                    <CaretDown weight="bold" className="w-10 h-10 text-neo-text" />
-                </div>
             </section>
 
             {/* Pipeline Visualizer */}
-            <section className="max-w-7xl mx-auto px-4 md:px-6 mb-24">
-                <div className="border-4 border-neo-border bg-white p-8 md:p-12 shadow-[8px_8px_0px_0px_#163300] overflow-x-auto relative z-10">
-                    <div ref={flowRef} className="min-w-[800px] flex items-center justify-between relative">
+            <section className="max-w-7xl mx-auto px-4 md:px-6 mb-16">
+                <div className="border-4 border-neo-border bg-white p-6 md:p-8 shadow-[8px_8px_0px_0px_#163300] overflow-x-auto relative z-10">
+                    <div ref={flowRef} className="min-w-[800px] flex items-center justify-between relative py-4">
                         {/* Background connecting line */}
-                        <div className="absolute top-[40px] left-12 right-12 h-3 bg-gray-200 border-y-2 border-neo-border z-0"></div>
+                        <div className="absolute top-1/2 left-12 right-12 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
                         {/* Animated overlay line */}
-                        <div className="absolute top-[40px] left-12 h-3 w-[80%] bg-primary border-y-2 border-neo-border z-0 agent-flow-line opacity-80"></div>
+                        <div className="absolute top-1/2 left-12 h-1 w-[80%] -translate-y-1/2 z-0 agent-flow-line opacity-80"></div>
 
                         {/* Input Node */}
                         <div className="flow-node relative z-10 flex flex-col items-center gap-4 w-32">
-                            <div className="w-20 h-20 rounded-full border-4 border-neo-border bg-gray-100 flex items-center justify-center shadow-[4px_4px_0px_0px_#163300] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#163300] transition-all">
-                                <Database weight="fill" className="w-10 h-10" />
+                            <div className="w-16 h-16 rounded-full border-3 border-neo-border bg-gray-100 flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:-translate-y-1 transition-all">
+                                <Database weight="fill" className="w-8 h-8" />
                             </div>
-                            <span className="font-mono text-sm font-bold uppercase text-center bg-white px-2 py-1 border-2 border-neo-border">Raw Data</span>
+                            <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-1 border-2 border-neo-border">Raw Data</span>
                         </div>
 
                         {/* Agent Nodes */}
                         {DATA.agents.map((agent, idx) => (
-                            <div key={idx} className="flow-node relative z-10 flex flex-col items-center gap-4 w-32">
-                                <div className={`w-20 h-20 border-4 border-neo-border flex items-center justify-center shadow-[4px_4px_0px_0px_#163300] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#163300] transition-all ${agent.color === 'dark' ? 'bg-neo-text text-primary border-primary' : 'bg-primary text-neo-text'}`}>
+                            <div key={idx} className="flow-node relative z-10 flex flex-col items-center gap-3 w-28">
+                                <div className={`w-16 h-16 border-3 border-neo-border flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:-translate-y-1 transition-all ${agent.color === 'dark' ? 'bg-neo-text text-primary border-primary' : 'bg-primary text-neo-text'}`}>
                                     {getIconForAgent(agent.id)}
                                 </div>
-                                <div className="flex flex-col items-center text-center bg-white px-2 py-1 border-2 border-neo-border">
-                                    <span className="font-mono text-[10px] font-bold text-gray-500">AGENT {agent.number}</span>
-                                    <span className="font-mono text-xs font-bold uppercase leading-tight">{agent.shortName}</span>
+                                <div className="flex flex-col items-center text-center bg-white px-1.5 py-1 border-2 border-neo-border">
+                                    <span className="font-mono text-[9px] font-bold text-gray-500">AGENT {agent.number}</span>
+                                    <span className="font-mono text-[10px] font-bold uppercase leading-tight">{agent.shortName}</span>
                                 </div>
                             </div>
                         ))}
 
                         {/* Output Node */}
-                        <div className="flow-node relative z-10 flex flex-col items-center gap-4 w-32">
-                            <div className="w-20 h-20 rounded-full border-4 border-neo-border bg-accent flex items-center justify-center shadow-[4px_4px_0px_0px_#163300] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#163300] transition-all">
-                                <ClipboardText weight="fill" className="w-10 h-10" />
+                        <div className="flow-node relative z-10 flex flex-col items-center gap-3 w-28">
+                            <div className="w-16 h-16 rounded-full border-3 border-neo-border bg-accent flex items-center justify-center shadow-[3px_3px_0px_0px_#163300] hover:-translate-y-1 transition-all">
+                                <ClipboardText weight="fill" className="w-8 h-8" />
                             </div>
-                            <span className="font-mono text-sm font-bold uppercase text-center bg-white px-2 py-1 border-2 border-neo-border">Action Plan</span>
+                            <span className="font-mono text-[10px] font-bold uppercase text-center bg-white px-2 py-1 border-2 border-neo-border">Action Plan</span>
                         </div>
                     </div>
                 </div>
@@ -231,7 +228,7 @@ export default function AgentsPage() {
                                 <div className={`w-full md:w-[45%] agent-card-item border-4 border-neo-border p-6 md:p-8 ${getColorClasses(agent.color)} relative overflow-hidden group transition-transform duration-300`}>
                                     
                                     {/* Number Watermark Parallax */}
-                                    <div className="agent-number absolute -right-6 -top-10 text-[200px] font-black opacity-[0.07] leading-none pointer-events-none transition-transform">
+                                    <div className="agent-number absolute -right-2 -top-4 text-[100px] font-black opacity-[0.05] leading-none pointer-events-none transition-transform">
                                         {agent.number}
                                     </div>
 

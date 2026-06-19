@@ -142,7 +142,7 @@ export default function ArchitecturePage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-20">
             {/* Header */}
-            <section className="arch-header max-w-7xl mx-auto px-4 md:px-6 pt-12 pb-8">
+            <section className="arch-header max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="h-10 w-10 bg-neo-text flex items-center justify-center text-primary shadow-neo-sm">
                         <TreeStructure weight="bold" className="w-6 h-6" />

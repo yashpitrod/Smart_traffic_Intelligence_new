@@ -123,21 +123,18 @@ export default function JourneyPage() {
     return (
         <div ref={containerRef} className="flex-1 w-full bg-grid pb-24 overflow-hidden">
             {/* Header */}
-            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-16 pb-16 text-center">
-                <div className="inline-flex items-center gap-4 mb-6">
-                    <div className="h-16 w-16 bg-neo-text text-primary flex items-center justify-center shadow-[6px_6px_0px_0px_#9FE870]">
-                        <Database weight="fill" className="w-10 h-10" />
+            <section ref={headerRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-6 pb-8 text-center">
+                <div className="inline-flex items-center gap-4 mb-4">
+                    <div className="h-14 w-14 bg-neo-text text-primary flex items-center justify-center shadow-[6px_6px_0px_0px_#9FE870]">
+                        <Database weight="fill" className="w-8 h-8" />
                     </div>
                 </div>
-                <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight leading-none mb-6">
+                <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
                     Data Pipeline
                 </h1>
-                <p className="text-xl md:text-2xl font-mono text-gray-700 max-w-3xl mx-auto">
+                <p className="text-lg md:text-xl font-mono text-gray-700 max-w-3xl mx-auto">
                     How we process 8,173 real Bengaluru incidents into predictive signals.
                 </p>
-                <div className="mt-12 animate-bounce flex justify-center">
-                    <CaretDown weight="bold" className="w-10 h-10 text-neo-text" />
-                </div>
             </section>
 
             <div ref={contentRef} className="max-w-7xl mx-auto px-4 md:px-6 relative">
