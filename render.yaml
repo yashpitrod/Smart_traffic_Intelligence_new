@@ -5,9 +5,8 @@
 #
 # SETUP STEPS:
 # 1. Connect your GitHub repo to Render.
-# 2. Set Root Directory to: Smart_traffic_Intelligence
-# 3. Create a secret environment group named "sti-secrets" in Render dashboard
-#    and add GROQ_API_KEY there.
+# 2. Leave Root Directory EMPTY (repo root is already Smart_traffic_Intelligence)
+# 3. Add GROQ_API_KEY as an environment variable in the Render dashboard.
 # 4. Push this file — Render will auto-detect and create the service.
 # =============================================================================
 
@@ -15,10 +14,9 @@ services:
   - type: web
     name: sti-backend
     runtime: docker
-    # Render sets Root Directory to Smart_traffic_Intelligence/
-    # so the Dockerfile path is relative to that root
+    # Dockerfile is at backend/Dockerfile relative to repo root
     dockerfilePath: ./backend/Dockerfile
-    # Build context is the root (Smart_traffic_Intelligence/) so all
+    # Build context is the repo root so all
     # backend/models/*.joblib and backend/data/*.csv are available
     dockerContext: .
     plan: free          # Change to "starter" or "standard" for production
@@ -44,7 +42,7 @@ services:
         value: /app
 
       # Groq API Key — set the actual value in Render Dashboard under
-      # "Environment" → "Secret Files" or "Environment Variables"
+      # "Environment" → "Environment Variables"
       # Never commit the actual key here.
       - key: GROQ_API_KEY
         sync: false     # Tells Render to expect this from the dashboard
