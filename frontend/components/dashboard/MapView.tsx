@@ -408,7 +408,7 @@ export default function MapView({ onOpenPanel, incidentPins = [], onNewIncident 
                 {onNewIncident && (
                     <button
                         onClick={onNewIncident}
-                        className="bg-neo-primary border-4 border-neo-border p-3 shadow-neo hover:bg-neo-primary-hover transition-colors flex items-center justify-center gap-2"
+                        className="bg-white border-4 border-neo-border p-3 shadow-neo hover:bg-neo-primary transition-colors flex items-center justify-center gap-2"
                         title="Submit New Incident"
                     >
                         <Plus size={28} weight="bold" />
