@@ -4,7 +4,6 @@
 > **Model:** sklearn.ensemble.IsolationForest
 > **Saved:** backend/models/anomaly_detector.joblib
 > **Trained by:** backend/training/isolation_forest.ipynb
-> **Source logic:** backend/agents/anomaly_detector.py TrafficAnomalyDetector.fit()
 
 ---
 
@@ -79,7 +78,7 @@ For every unique `(zone_or_station, day_type, time_bucket)` combination:
 | 0.0 to -0.1 | Watch | Amber | Elevated activity, monitor closely |
 | < -0.1 | Critical | Red | Significant anomaly, trigger action plan |
 
-Thresholds defined in `anomaly_detector.py:323-329` and documented in AGENTS.md.
+Thresholds defined in `backend/routes/anomaly.py` and documented in AGENTS.md.
 
 ---
 
@@ -158,7 +157,7 @@ At inference time (every 13 seconds in backend, polled by frontend every 5 secon
   All incidents contribute to zone-level baseline regardless of data quality flags.
 - The Isolation Forest is **unsupervised** -- no labelled anomalies exist in the dataset.
   The 5% contamination is a prior expectation, not a measured quantity.
-- `anomaly_detector.py` retrains on server startup; this notebook produces an identical
-  `.joblib` for offline inspection and validation.
+- The Isolation Forest model is trained exclusively by this notebook. The FastAPI server merely
+  loads the resulting `.joblib` at startup.
 - **Do not drop null-zone records** -- removes 57.9% of training data and leaves many
   police stations without baseline coverage.
