@@ -8,10 +8,10 @@ import ZoneClarificationModal from './ZoneClarificationModal';
 // All are routed through the Groq API — no extra keys needed.
 // ---------------------------------------------------------------------------
 const MODEL_OPTIONS = [
-    { id: 'groq/compound-mini', label: 'Compound Mini', provider: 'Groq', badge: 'Fast' },
-    { id: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B', provider: 'Meta', badge: 'Light' },
-    { id: 'openai/gpt-oss-120b', label: 'GPT OSS 120B', provider: 'OpenAI', badge: 'Large' },
+    { id: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B', provider: 'Meta', badge: 'Fast' },
     { id: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B', provider: 'Meta', badge: 'Smart' },
+    { id: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B', provider: 'Mistral', badge: 'Balanced' },
+    { id: 'gemma2-9b-it', label: 'Gemma 2 9B', provider: 'Google', badge: 'Light' },
 ] as const;
 
 // ---------------------------------------------------------------------------
