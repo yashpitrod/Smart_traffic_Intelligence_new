@@ -15,7 +15,7 @@ env:
   PYTHON_VERSION: '3.11'
   NODE_VERSION: '20'
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/sti-backend
+  IMAGE_NAME: yashpitrod/smart_traffic_intelligence_new/sti-backend
 
 permissions:
   contents: read
