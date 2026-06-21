@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const isProduction = process.env.NODE_ENV === 'production';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || (isProduction ? 'https://smart-traffic-intelligence.onrender.com' : 'http://localhost:8000');
 
 export async function fetchHeatmap() {
     try {

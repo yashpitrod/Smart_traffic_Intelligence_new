@@ -214,6 +214,16 @@ async def shutdown_event() -> None:
 # Health check
 # ---------------------------------------------------------------------------
 
+@app.get("/", tags=["System"])
+async def root():
+    """Root endpoint — used by Render health checks."""
+    return {
+        "status": "ok",
+        "service": "Smart Traffic Intelligence API",
+        "version": "1.0.0",
+    }
+
+
 @app.get("/health", tags=["System"])
 async def health_check():
     """Quick liveness probe — returns 200 OK with server status."""
