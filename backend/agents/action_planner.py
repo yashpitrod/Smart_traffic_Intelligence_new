@@ -15,10 +15,10 @@ logger = logging.getLogger(__name__)
 # Allowed LLM models for Agent 4 (Action Planner) — all routed via Groq API
 # ---------------------------------------------------------------------------
 ALLOWED_MODELS = [
+    "groq/compound-mini",
     "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
     "llama-3.3-70b-versatile",
-    "deepseek-r1-distill-llama-70b",
-    "qwen-2.5-32b",
 ]
 DEFAULT_MODEL = "llama-3.1-8b-instant"
 
